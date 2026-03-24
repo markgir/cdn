@@ -11,96 +11,116 @@
     :root {
       --sidebar-w: 260px;
       --header-h: 56px;
-      --sidebar-bg: #111827;
-      --sidebar-hover: #1f2937;
+      --sidebar-bg: #0f172a;
+      --sidebar-hover: #1e293b;
       --sidebar-active: #1e3a5f;
-      --sidebar-text: #9ca3af;
+      --sidebar-text: #94a3b8;
       --sidebar-text-active: #ffffff;
       --accent: #3b82f6;
       --accent-light: #60a5fa;
-      --card-radius: 12px;
+      --accent-gradient: linear-gradient(135deg, #3b82f6, #6366f1);
+      --card-radius: 14px;
       --transition-speed: 0.2s;
-      --content-bg: #f1f5f9;
+      --content-bg: #f8fafc;
       --card-bg: #ffffff;
       --card-border: #e2e8f0;
-      --text-primary: #1e293b;
+      --text-primary: #0f172a;
       --text-secondary: #64748b;
-      --table-hover: #f8fafc;
-      --header-bg: #ffffff;
+      --table-hover: #f1f5f9;
+      --header-bg: rgba(255,255,255,0.85);
       --header-border: #e2e8f0;
       --input-bg: #ffffff;
       --badge-muted-bg: #f1f5f9;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
     }
     [data-bs-theme="dark"] {
+      --sidebar-bg: #020617;
+      --sidebar-hover: #0f172a;
       --content-bg: #0f172a;
       --card-bg: #1e293b;
       --card-border: #334155;
       --text-primary: #f1f5f9;
       --text-secondary: #94a3b8;
       --table-hover: #334155;
-      --header-bg: #1e293b;
+      --header-bg: rgba(30,41,59,0.9);
       --header-border: #334155;
       --input-bg: #334155;
       --badge-muted-bg: #334155;
     }
+    *, *::before, *::after { box-sizing: border-box; }
     body, .card, .btn, .form-control, .form-select, .table, .modal-content, #header, #main, .theme-toggle, .nav-item a, .stat-icon, .badge { transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed); }
-    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--content-bg); color: var(--text-primary); margin: 0; overflow-x: hidden; }
+    body { font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--content-bg); color: var(--text-primary); margin: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
+    /* ── Sidebar ──────────────────────────────────────────── */
     #sidebar {
       width: var(--sidebar-w); height: 100vh; background: var(--sidebar-bg);
       position: fixed; left: 0; top: 0; z-index: 1040; display: flex; flex-direction: column;
       transition: transform var(--transition-speed);
+      border-right: 1px solid rgba(255,255,255,0.05);
     }
-    .sidebar-brand { padding: 20px 24px; border-bottom: 1px solid #1f2937; display: flex; align-items: center; gap: 12px; }
-    .sidebar-brand-icon { width: 36px; height: 36px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.1rem; }
-    .sidebar-brand-text { color: #fff; font-weight: 700; font-size: 1.1rem; }
+    .sidebar-brand { padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 12px; }
+    .sidebar-brand-icon { width: 38px; height: 38px; background: var(--accent-gradient); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+    .sidebar-brand-text { color: #fff; font-weight: 700; font-size: 1.1rem; letter-spacing: -0.02em; }
     .sidebar-brand-text span { color: var(--accent-light); }
-    .sidebar-version { font-size: 0.65rem; background: #1f2937; color: #9ca3af; padding: 2px 8px; border-radius: 6px; margin-left: auto; }
-    .sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
-    .sidebar-nav .nav-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: #4b5563; padding: 16px 24px 6px; font-weight: 600; }
+    .sidebar-version { font-size: 0.6rem; background: rgba(255,255,255,0.06); color: #64748b; padding: 2px 8px; border-radius: 6px; margin-left: auto; font-weight: 500; letter-spacing: 0.5px; }
+    .sidebar-nav { flex: 1; padding: 8px 0; overflow-y: auto; }
+    .sidebar-nav .nav-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.2px; color: #475569; padding: 18px 24px 6px; font-weight: 600; }
     .nav-item a {
       display: flex; align-items: center; gap: 12px; padding: 10px 24px; color: var(--sidebar-text);
-      text-decoration: none; font-size: 0.9rem; border-left: 3px solid transparent;
-      transition: all var(--transition-speed);
+      text-decoration: none; font-size: 0.875rem; border-left: 3px solid transparent;
+      transition: all var(--transition-speed); font-weight: 500;
     }
-    .nav-item a:hover { background: var(--sidebar-hover); color: #d1d5db; }
+    .nav-item a:hover { background: var(--sidebar-hover); color: #cbd5e1; }
     .nav-item a.active { background: var(--sidebar-active); color: var(--sidebar-text-active); border-left-color: var(--accent); }
-    .nav-item a i { font-size: 1.15rem; width: 22px; text-align: center; }
-    .sidebar-footer { padding: 16px 24px; border-top: 1px solid #1f2937; text-align: center; }
-    .sidebar-footer small { color: #6b7280; font-size: 0.75rem; }
+    .nav-item a i { font-size: 1.1rem; width: 22px; text-align: center; opacity: 0.85; }
+    .nav-item a.active i { opacity: 1; }
+    .nav-badge { font-size: 0.6rem; background: var(--accent); color: #fff; padding: 1px 7px; border-radius: 10px; margin-left: auto; font-weight: 600; }
+    .sidebar-footer { padding: 16px 24px; border-top: 1px solid rgba(255,255,255,0.06); text-align: center; }
+    .sidebar-footer small { color: #475569; font-size: 0.7rem; }
     .sidebar-footer a { color: var(--accent-light); text-decoration: none; }
 
+    /* ── Header ──────────────────────────────────────────── */
     #header {
       position: fixed; top: 0; left: var(--sidebar-w); right: 0; height: var(--header-h); z-index: 1030;
       background: var(--header-bg); border-bottom: 1px solid var(--header-border);
-      display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between; padding: 0 28px;
       transition: left var(--transition-speed), background-color var(--transition-speed);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     }
     .header-left { display: flex; align-items: center; gap: 12px; }
-    .breadcrumb-section { font-weight: 600; font-size: 1rem; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+    .breadcrumb-section { font-weight: 600; font-size: 0.95rem; color: var(--text-primary); display: flex; align-items: center; gap: 8px; letter-spacing: -0.01em; }
     .breadcrumb-section i { color: var(--accent); }
-    .header-right { display: flex; align-items: center; gap: 16px; }
-    .refresh-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; display: inline-block; animation: pulse-dot 2s infinite; }
-    @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
-    .theme-toggle { background: none; border: 1px solid var(--card-border); border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--text-primary); font-size: 1rem; transition: all var(--transition-speed); }
-    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .refresh-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); display: inline-block; animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+    .theme-toggle { background: none; border: 1px solid var(--card-border); border-radius: 8px; padding: 5px 10px; cursor: pointer; color: var(--text-primary); font-size: 1rem; transition: all var(--transition-speed); }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); background: rgba(59,130,246,0.05); }
     .hamburger { display: none; background: none; border: none; font-size: 1.4rem; color: var(--text-primary); cursor: pointer; padding: 4px; }
+    .header-update-btn { background: none; border: 1px solid var(--card-border); border-radius: 8px; padding: 5px 10px; cursor: pointer; color: var(--text-secondary); font-size: 0.8rem; transition: all var(--transition-speed); display: flex; align-items: center; gap: 5px; }
+    .header-update-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .header-update-btn.has-update { border-color: var(--success); color: var(--success); animation: gentle-pulse 2s infinite; }
+    @keyframes gentle-pulse { 0%,100% { opacity:1; } 50% { opacity:0.7; } }
 
+    /* ── Main ────────────────────────────────────────────── */
     #main { margin-left: var(--sidebar-w); margin-top: var(--header-h); padding: 28px; min-height: calc(100vh - var(--header-h)); transition: margin-left var(--transition-speed); }
     .section { display: none; }
-    .section.active { display: block; animation: fadeSection 0.25s ease; }
-    @keyframes fadeSection { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+    .section.active { display: block; animation: fadeSection 0.3s ease; }
+    @keyframes fadeSection { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
+    /* ── Cards ────────────────────────────────────────────── */
     .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--card-radius); box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: all var(--transition-speed); }
-    .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+    .card-header-custom { background: var(--card-bg); border-bottom: 1px solid var(--card-border); border-radius: var(--card-radius) var(--card-radius) 0 0; padding: 14px 20px; }
     .stat-card { position: relative; overflow: hidden; }
-    .stat-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
-    .stat-card.border-green::before { background: #22c55e; }
+    .stat-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 4px 0 0 4px; }
+    .stat-card.border-green::before { background: var(--success); }
     .stat-card.border-gray::before { background: #6b7280; }
     .stat-card.border-blue::before { background: #3b82f6; }
     .stat-card.border-cyan::before { background: #06b6d4; }
     .stat-card .card-body { padding: 20px 20px 20px 24px; }
-    .stat-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+    .stat-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
     .stat-icon.green { background: #dcfce7; color: #16a34a; }
     .stat-icon.gray { background: #f3f4f6; color: #6b7280; }
     .stat-icon.blue { background: #dbeafe; color: #2563eb; }
@@ -109,48 +129,74 @@
     [data-bs-theme="dark"] .stat-icon.gray { background: #374151; }
     [data-bs-theme="dark"] .stat-icon.blue { background: #1e3a5f; }
     [data-bs-theme="dark"] .stat-icon.cyan { background: #164e63; }
-    .stat-num { font-size: 1.75rem; font-weight: 700; line-height: 1.2; }
+    .stat-num { font-size: 1.7rem; font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
+    .stat-label { font-size: 0.8rem; color: var(--text-secondary); font-weight: 500; margin-bottom: 4px; }
+    .stat-sub { font-size: 0.75rem; color: var(--text-secondary); }
 
+    /* ── Tables ──────────────────────────────────────────── */
     .table { color: var(--text-primary); }
-    .table th { font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); border-bottom-width: 2px; }
-    .table td { vertical-align: middle; font-size: 0.875rem; }
+    .table th { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); border-bottom-width: 2px; }
+    .table td { vertical-align: middle; font-size: 0.85rem; }
     .table-hover tbody tr:hover { background: var(--table-hover); }
     [data-bs-theme="dark"] .table-light { background: #334155; color: #e2e8f0; }
     [data-bs-theme="dark"] .table { --bs-table-bg: var(--card-bg); --bs-table-hover-bg: var(--table-hover); }
 
-    .form-control, .form-select { background: var(--input-bg); border-color: var(--card-border); color: var(--text-primary); border-radius: 8px; }
-    .form-control:focus, .form-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+    /* ── Forms ────────────────────────────────────────────── */
+    .form-control, .form-select { background: var(--input-bg); border-color: var(--card-border); color: var(--text-primary); border-radius: 8px; font-size: 0.875rem; }
+    .form-control:focus, .form-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
     [data-bs-theme="dark"] .form-control, [data-bs-theme="dark"] .form-select { background: var(--input-bg); border-color: var(--card-border); color: var(--text-primary); }
     [data-bs-theme="dark"] .modal-content { background: var(--card-bg); color: var(--text-primary); }
     [data-bs-theme="dark"] .modal-header, [data-bs-theme="dark"] .modal-footer { border-color: var(--card-border); }
     [data-bs-theme="dark"] .btn-close { filter: invert(1); }
 
-    #toastContainer { position: fixed; top: 72px; right: 24px; z-index: 9999; min-width: 280px; }
-    .toast { animation: slideInToast 0.3s ease; border-radius: 10px; }
+    /* ── Toast ────────────────────────────────────────────── */
+    #toastContainer { position: fixed; top: 72px; right: 24px; z-index: 9999; min-width: 300px; }
+    .toast { animation: slideInToast 0.3s ease; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
     @keyframes slideInToast { from { transform: translateX(100%); opacity:0; } to { transform: translateX(0); opacity:1; } }
 
+    /* ── Origins ──────────────────────────────────────────── */
     .origin-card { border-radius: var(--card-radius); }
     .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
-    .status-dot.active { background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.2); }
+    .status-dot.active { background: var(--success); box-shadow: 0 0 0 3px rgba(16,185,129,0.2); }
     .status-dot.inactive { background: #9ca3af; }
-    .type-badge { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 10px; border-radius: 6px; }
+    .type-badge { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 10px; border-radius: 6px; }
     .type-badge.woocommerce { background: #dbeafe; color: #1d4ed8; }
     .type-badge.prestashop { background: #fef3c7; color: #92400e; }
     .type-badge.generic { background: var(--badge-muted-bg); color: var(--text-secondary); }
     [data-bs-theme="dark"] .type-badge.woocommerce { background: #1e3a5f; color: #93c5fd; }
     [data-bs-theme="dark"] .type-badge.prestashop { background: #451a03; color: #fbbf24; }
 
+    /* ── Settings ─────────────────────────────────────────── */
     .settings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
-    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--card-border); font-size: 0.875rem; }
+    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--card-border); font-size: 0.85rem; }
     .info-row:last-child { border-bottom: none; }
     .info-label { color: var(--text-secondary); font-weight: 500; }
-    .info-value { font-weight: 600; color: var(--text-primary); font-family: 'SFMono-Regular', monospace; }
+    .info-value { font-weight: 600; color: var(--text-primary); font-family: 'SFMono-Regular', 'Cascadia Code', monospace; font-size: 0.8rem; }
 
-    .btn { border-radius: 8px; font-size: 0.875rem; font-weight: 500; transition: all var(--transition-speed); }
+    /* ── Buttons ──────────────────────────────────────────── */
+    .btn { border-radius: 8px; font-size: 0.85rem; font-weight: 500; transition: all var(--transition-speed); }
     .btn-primary { background: var(--accent); border-color: var(--accent); }
-    .btn-primary:hover { background: #2563eb; border-color: #2563eb; }
+    .btn-primary:hover { background: #2563eb; border-color: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
 
-    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1035; }
+    /* ── Update Section ──────────────────────────────────── */
+    .update-status-card { border-left: 4px solid var(--accent); }
+    .update-status-card.up-to-date { border-left-color: var(--success); }
+    .update-status-card.has-updates { border-left-color: var(--warning); }
+    .update-status-card.error { border-left-color: var(--danger); }
+    .commit-list { max-height: 300px; overflow-y: auto; }
+    .commit-item { padding: 10px 16px; border-bottom: 1px solid var(--card-border); display: flex; align-items: flex-start; gap: 12px; font-size: 0.85rem; }
+    .commit-item:last-child { border-bottom: none; }
+    .commit-hash { font-family: 'SFMono-Regular', 'Cascadia Code', monospace; font-size: 0.75rem; background: var(--badge-muted-bg); padding: 2px 8px; border-radius: 4px; color: var(--accent); font-weight: 600; white-space: nowrap; }
+    .commit-msg { color: var(--text-primary); font-weight: 500; }
+    .commit-meta { font-size: 0.75rem; color: var(--text-secondary); }
+    .step-indicator { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 0.85rem; }
+    .step-indicator .bi { font-size: 1rem; }
+    .step-indicator.success .bi { color: var(--success); }
+    .step-indicator.error .bi { color: var(--danger); }
+    .step-indicator.pending .bi { color: var(--text-secondary); }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1035; backdrop-filter: blur(4px); }
     @media (max-width: 991.98px) {
       #sidebar { transform: translateX(-100%); }
       #sidebar.open { transform: translateX(0); }
@@ -163,7 +209,12 @@
 
     .section-loading { display: flex; justify-content: center; padding: 48px; }
     .mem-bar { height: 8px; border-radius: 4px; background: var(--card-border); overflow: hidden; }
-    .mem-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+    .mem-bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+
+    /* ── Section headers ─────────────────────────────────── */
+    .section-header { margin-bottom: 24px; }
+    .section-header h5 { font-weight: 700; font-size: 1.15rem; letter-spacing: -0.02em; margin-bottom: 4px; }
+    .section-header p { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0; }
   </style>
 </head>
 <body>
@@ -174,7 +225,7 @@
   <div class="sidebar-brand">
     <div class="sidebar-brand-icon"><i class="bi bi-hdd-stack"></i></div>
     <div class="sidebar-brand-text">CDN <span>Manager</span></div>
-    <span class="sidebar-version">v1.0.0</span>
+    <span class="sidebar-version" id="sidebarVersion">v1.0.0</span>
   </div>
   <div class="sidebar-nav">
     <div class="nav-label">Main</div>
@@ -185,11 +236,13 @@
     <div class="nav-label">Tools</div>
     <div class="nav-item"><a href="#" data-section="images"><i class="bi bi-image"></i> Images</a></div>
     <div class="nav-item"><a href="#" data-section="integration"><i class="bi bi-plug"></i> Integration</a></div>
+    <div class="nav-label">System</div>
+    <div class="nav-item"><a href="#" data-section="updates"><i class="bi bi-cloud-arrow-down"></i> Updates <span class="nav-badge" id="updateBadge" style="display:none">0</span></a></div>
     <div class="nav-item"><a href="#" data-section="settings"><i class="bi bi-gear"></i> Settings</a></div>
   </div>
   <div class="sidebar-footer">
     <small>Powered by <a href="https://iddigital.pt" target="_blank">iddigital.pt</a></small><br>
-    <small class="text-muted">CDN Manager v1.0.0</small>
+    <small style="color:#475569">CDN Manager <span id="footerVersion">v1.0.0</span></small>
   </div>
 </nav>
 
@@ -200,6 +253,7 @@
   </div>
   <div class="header-right">
     <span class="d-none d-sm-flex align-items-center gap-2 small" style="color:var(--text-secondary)"><span class="refresh-dot" id="refreshDot"></span> Auto-refresh</span>
+    <button class="header-update-btn d-none d-sm-flex" id="headerUpdateBtn" title="Check for updates" onclick="navigateTo('updates')"><i class="bi bi-cloud-arrow-down"></i> <span id="headerUpdateText">Up to date</span></button>
     <button class="theme-toggle" id="themeToggle" title="Toggle dark mode"><i class="bi bi-moon-stars"></i></button>
   </div>
 </header>
@@ -208,8 +262,11 @@
 
   <!-- Dashboard -->
   <section id="sec-dashboard" class="section active">
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-      <h5 class="fw-bold mb-0">Dashboard Overview</h5>
+    <div class="section-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+      <div>
+        <h5>Dashboard Overview</h5>
+        <p>Real-time performance metrics and request monitoring</p>
+      </div>
       <button class="btn btn-sm btn-outline-secondary" onclick="loadStatus();loadLogs()"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
     </div>
     <div class="row g-3 mb-4">
@@ -217,7 +274,7 @@
         <div class="card stat-card border-green">
           <div class="card-body d-flex align-items-start gap-3">
             <div class="stat-icon green"><i class="bi bi-check-circle"></i></div>
-            <div><div class="small mb-1" style="color:var(--text-secondary)">Cache Hits</div><div class="stat-num" id="statHits">&mdash;</div><div class="small" style="color:var(--text-secondary)">Rate: <strong id="statHitRate">&mdash;</strong></div></div>
+            <div><div class="stat-label">Cache Hits</div><div class="stat-num" id="statHits">&mdash;</div><div class="stat-sub">Rate: <strong id="statHitRate">&mdash;</strong></div></div>
           </div>
         </div>
       </div>
@@ -225,7 +282,7 @@
         <div class="card stat-card border-gray">
           <div class="card-body d-flex align-items-start gap-3">
             <div class="stat-icon gray"><i class="bi bi-x-circle"></i></div>
-            <div><div class="small mb-1" style="color:var(--text-secondary)">Cache Misses</div><div class="stat-num" id="statMisses">&mdash;</div><div class="small" style="color:var(--text-secondary)">Errors: <strong id="statErrors">&mdash;</strong></div></div>
+            <div><div class="stat-label">Cache Misses</div><div class="stat-num" id="statMisses">&mdash;</div><div class="stat-sub">Errors: <strong id="statErrors">&mdash;</strong></div></div>
           </div>
         </div>
       </div>
@@ -233,7 +290,7 @@
         <div class="card stat-card border-blue">
           <div class="card-body d-flex align-items-start gap-3">
             <div class="stat-icon blue"><i class="bi bi-archive"></i></div>
-            <div><div class="small mb-1" style="color:var(--text-secondary)">Cached Items</div><div class="stat-num" id="statSize">&mdash;</div><div class="small" style="color:var(--text-secondary)">Max: <strong id="statMaxItems">&mdash;</strong></div></div>
+            <div><div class="stat-label">Cached Items</div><div class="stat-num" id="statSize">&mdash;</div><div class="stat-sub">Max: <strong id="statMaxItems">&mdash;</strong></div></div>
           </div>
         </div>
       </div>
@@ -241,13 +298,13 @@
         <div class="card stat-card border-cyan">
           <div class="card-body d-flex align-items-start gap-3">
             <div class="stat-icon cyan"><i class="bi bi-clock-history"></i></div>
-            <div><div class="small mb-1" style="color:var(--text-secondary)">Uptime</div><div class="stat-num" id="statUptime">&mdash;</div><div class="small" style="color:var(--text-secondary)">Mem: <strong id="statMem">&mdash;</strong> MB</div></div>
+            <div><div class="stat-label">Uptime</div><div class="stat-num" id="statUptime">&mdash;</div><div class="stat-sub">Mem: <strong id="statMem">&mdash;</strong> MB</div></div>
           </div>
         </div>
       </div>
     </div>
     <div class="card">
-      <div class="card-header d-flex justify-content-between align-items-center" style="background:var(--card-bg);border-bottom:1px solid var(--card-border);border-radius:var(--card-radius) var(--card-radius) 0 0;">
+      <div class="card-header-custom d-flex justify-content-between align-items-center">
         <span class="fw-semibold"><i class="bi bi-activity me-2" style="color:var(--accent)"></i>Recent Requests</span>
         <button class="btn btn-sm btn-outline-secondary" onclick="loadLogs()"><i class="bi bi-arrow-clockwise"></i></button>
       </div>
@@ -262,8 +319,11 @@
 
   <!-- Origins -->
   <section id="sec-origins" class="section">
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-      <h5 class="fw-bold mb-0">Origin Servers</h5>
+    <div class="section-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+      <div>
+        <h5>Origin Servers</h5>
+        <p>Manage upstream servers that CDN proxies traffic to</p>
+      </div>
       <div class="d-flex gap-2 flex-wrap">
         <button class="btn btn-sm btn-outline-success" onclick="exportOrigins()"><i class="bi bi-download"></i> Export</button>
         <button class="btn btn-sm btn-outline-info" onclick="document.getElementById('importFile').click()"><i class="bi bi-upload"></i> Import</button>
@@ -276,7 +336,10 @@
 
   <!-- Cache -->
   <section id="sec-cache" class="section">
-    <h5 class="fw-bold mb-4">Cache Management</h5>
+    <div class="section-header">
+      <h5>Cache Management</h5>
+      <p>Purge individual keys, prefixes, or flush the entire cache</p>
+    </div>
     <div class="row g-3 mb-4">
       <div class="col-md-6">
         <div class="card p-4">
@@ -297,7 +360,7 @@
       </div>
     </div>
     <div class="card">
-      <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2" style="background:var(--card-bg);border-bottom:1px solid var(--card-border);border-radius:var(--card-radius) var(--card-radius) 0 0;">
+      <div class="card-header-custom d-flex justify-content-between align-items-center flex-wrap gap-2">
         <span class="fw-semibold"><i class="bi bi-key me-2" style="color:var(--accent)"></i>Cache Keys</span>
         <div class="d-flex gap-2 align-items-center">
           <input class="form-control form-control-sm" id="keySearch" placeholder="Filter keys..." oninput="loadKeys()" style="width:200px" />
@@ -315,8 +378,10 @@
 
   <!-- Images -->
   <section id="sec-images" class="section">
-    <h5 class="fw-bold mb-2">Image Generator</h5>
-    <p class="mb-4" style="color:var(--text-secondary)">Generate SVG placeholder and banner images for your projects.</p>
+    <div class="section-header">
+      <h5>Image Generator</h5>
+      <p>Generate SVG placeholder and banner images for your projects</p>
+    </div>
     <div class="row g-4">
       <div class="col-lg-5">
         <div class="card p-4">
@@ -372,7 +437,10 @@
 
   <!-- Integration -->
   <section id="sec-integration" class="section">
-    <h5 class="fw-bold mb-4">Store Integration</h5>
+    <div class="section-header">
+      <h5>Store Integration</h5>
+      <p>Connect your e-commerce platform to the CDN</p>
+    </div>
     <ul class="nav nav-tabs mb-4" id="integTab">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tabWoo"><i class="bi bi-bag-check"></i> WooCommerce</a></li>
       <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabPS"><i class="bi bi-cart3"></i> PrestaShop</a></li>
@@ -408,9 +476,91 @@
     </div>
   </section>
 
+  <!-- Updates -->
+  <section id="sec-updates" class="section">
+    <div class="section-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+      <div>
+        <h5>Software Updates</h5>
+        <p>Check and apply updates from GitHub safely without losing your configuration</p>
+      </div>
+      <button class="btn btn-sm btn-outline-primary" onclick="checkForUpdates()" id="checkUpdatesBtn"><i class="bi bi-cloud-arrow-down"></i> Check for Updates</button>
+    </div>
+
+    <!-- Current Version Info -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="card update-status-card" id="updateStatusCard">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div class="stat-icon blue"><i class="bi bi-git"></i></div>
+              <div>
+                <div class="fw-semibold" style="font-size:1rem">Current Version</div>
+                <div class="small" style="color:var(--text-secondary)">Local repository status</div>
+              </div>
+            </div>
+            <div id="gitStatusContent">
+              <div class="section-loading"><div class="spinner-border spinner-border-sm text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div class="stat-icon cyan"><i class="bi bi-cloud-check"></i></div>
+              <div>
+                <div class="fw-semibold" style="font-size:1rem">Remote Status</div>
+                <div class="small" style="color:var(--text-secondary)">Available updates from GitHub</div>
+              </div>
+            </div>
+            <div id="updateCheckContent">
+              <p class="small mb-0" style="color:var(--text-secondary)">Click &ldquo;Check for Updates&rdquo; to verify if new updates are available.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Commits List -->
+    <div class="card mb-4" id="newCommitsCard" style="display:none">
+      <div class="card-header-custom d-flex justify-content-between align-items-center">
+        <span class="fw-semibold"><i class="bi bi-clock-history me-2" style="color:var(--accent)"></i>New Commits Available</span>
+        <span class="badge bg-warning text-dark" id="commitCount">0</span>
+      </div>
+      <div class="commit-list" id="commitList"></div>
+    </div>
+
+    <!-- Update Actions -->
+    <div class="card" id="updateActionsCard" style="display:none">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-start gap-3 mb-3">
+          <div class="stat-icon green" style="flex-shrink:0"><i class="bi bi-shield-check"></i></div>
+          <div>
+            <div class="fw-semibold mb-1">Safe Update Process</div>
+            <p class="small mb-0" style="color:var(--text-secondary)">
+              The update process automatically saves any local changes (data, configuration) before pulling new code from GitHub.
+              After the update, your local changes are restored. This ensures no content is lost during the update.
+            </p>
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-3 flex-wrap">
+          <button class="btn btn-primary" id="pullUpdatesBtn" onclick="pullUpdates()"><i class="bi bi-cloud-arrow-down"></i> Apply Updates</button>
+        </div>
+        <div id="updateLog" class="mt-3" style="display:none">
+          <div class="fw-semibold small mb-2">Update Progress:</div>
+          <div id="updateSteps"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Settings -->
   <section id="sec-settings" class="section">
-    <h5 class="fw-bold mb-4">System Information</h5>
+    <div class="section-header">
+      <h5>System Information</h5>
+      <p>Server configuration, memory usage, and runtime details</p>
+    </div>
     <div id="settingsContent"><div class="section-loading"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div></div>
   </section>
 
@@ -488,7 +638,7 @@ function toast(msg, type) {
   el.setAttribute('role', 'alert');
   el.innerHTML = '<div class="d-flex"><div class="toast-body">' + msg + '</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>';
   document.getElementById('toastContainer').appendChild(el);
-  setTimeout(function() { el.remove(); }, 3500);
+  setTimeout(function() { el.remove(); }, 4000);
 }
 
 /* Theme */
@@ -516,23 +666,27 @@ overlay.addEventListener('click', function() {
 });
 
 /* Navigation */
-var sectionIcons = { dashboard:'bi-grid-1x2', origins:'bi-hdd-network', cache:'bi-database', images:'bi-image', integration:'bi-plug', settings:'bi-gear' };
-var sectionTitles = { dashboard:'Dashboard', origins:'Origins', cache:'Cache', images:'Images', integration:'Integration', settings:'Settings' };
+var sectionIcons = { dashboard:'bi-grid-1x2', origins:'bi-hdd-network', cache:'bi-database', images:'bi-image', integration:'bi-plug', updates:'bi-cloud-arrow-down', settings:'bi-gear' };
+var sectionTitles = { dashboard:'Dashboard', origins:'Origins', cache:'Cache', images:'Images', integration:'Integration', updates:'Updates', settings:'Settings' };
+function navigateTo(sec) {
+  document.querySelectorAll('[data-section]').forEach(function(l) { l.classList.remove('active'); });
+  var link = document.querySelector('[data-section="' + sec + '"]');
+  if (link) link.classList.add('active');
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('sec-' + sec).classList.add('active');
+  document.getElementById('breadcrumb').innerHTML = '<i class="bi ' + (sectionIcons[sec] || 'bi-grid-1x2') + '"></i> ' + (sectionTitles[sec] || sec);
+  sidebar.classList.remove('open');
+  overlay.classList.remove('show');
+  if (sec === 'dashboard') { loadStatus(); loadLogs(); }
+  if (sec === 'origins') loadOrigins();
+  if (sec === 'cache') loadKeys();
+  if (sec === 'updates') { loadGitStatus(); }
+  if (sec === 'settings') loadSystem();
+}
 document.querySelectorAll('[data-section]').forEach(function(link) {
   link.addEventListener('click', function(e) {
     e.preventDefault();
-    var sec = link.dataset.section;
-    document.querySelectorAll('[data-section]').forEach(function(l) { l.classList.remove('active'); });
-    link.classList.add('active');
-    document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
-    document.getElementById('sec-' + sec).classList.add('active');
-    document.getElementById('breadcrumb').innerHTML = '<i class="bi ' + (sectionIcons[sec] || 'bi-grid-1x2') + '"></i> ' + (sectionTitles[sec] || sec);
-    sidebar.classList.remove('open');
-    overlay.classList.remove('show');
-    if (sec === 'dashboard') { loadStatus(); loadLogs(); }
-    if (sec === 'origins') loadOrigins();
-    if (sec === 'cache') loadKeys();
-    if (sec === 'settings') loadSystem();
+    navigateTo(link.dataset.section);
   });
 });
 
@@ -782,6 +936,163 @@ function copyImageUrl() {
   navigator.clipboard.writeText(document.getElementById('imageDirectUrl').value).then(function() { toast('URL copied!'); });
 }
 
+/* Updates */
+async function loadGitStatus() {
+  var c = document.getElementById('gitStatusContent');
+  try {
+    var d = await api('/update/status');
+    if (d.error) {
+      c.innerHTML = '<p class="small text-danger mb-0">' + escHtml(d.error) + '</p>';
+      return;
+    }
+    var html = '<div class="info-row"><span class="info-label">Branch</span><span class="info-value">' + escHtml(d.branch) + '</span></div>';
+    html += '<div class="info-row"><span class="info-label">Commit</span><span class="info-value"><span class="commit-hash">' + escHtml(d.commit.shortHash) + '</span></span></div>';
+    html += '<div class="info-row"><span class="info-label">Message</span><span class="info-value" style="max-width:60%;text-align:right;word-break:break-word">' + escHtml(d.commit.subject) + '</span></div>';
+    html += '<div class="info-row"><span class="info-label">Author</span><span class="info-value">' + escHtml(d.commit.author) + '</span></div>';
+    html += '<div class="info-row"><span class="info-label">Date</span><span class="info-value">' + escHtml(d.commit.date) + '</span></div>';
+    if (d.hasLocalChanges) {
+      html += '<div class="mt-2"><span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle"></i> ' + d.modifiedFiles.length + ' local change(s)</span></div>';
+    } else {
+      html += '<div class="mt-2"><span class="badge bg-success"><i class="bi bi-check-circle"></i> No local changes</span></div>';
+    }
+    // Update sidebar version with short hash
+    var versionText = escHtml(d.commit.shortHash);
+    document.getElementById('sidebarVersion').textContent = versionText;
+    document.getElementById('footerVersion').textContent = versionText;
+    c.innerHTML = html;
+  } catch (e) {
+    c.innerHTML = '<p class="small text-danger mb-0">Failed to load git status.</p>';
+  }
+}
+
+async function checkForUpdates() {
+  var btn = document.getElementById('checkUpdatesBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Checking...';
+
+  try {
+    var d = await api('/update/check');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-cloud-arrow-down"></i> Check for Updates';
+
+    if (d.error) {
+      toast('Error: ' + d.error, 'danger');
+      document.getElementById('updateCheckContent').innerHTML = '<p class="small text-danger mb-0">' + escHtml(d.error) + '</p>';
+      return;
+    }
+
+    var statusCard = document.getElementById('updateStatusCard');
+    statusCard.className = 'card update-status-card ' + (d.upToDate ? 'up-to-date' : 'has-updates');
+
+    var html = '<div class="info-row"><span class="info-label">Status</span><span class="info-value">';
+    if (d.upToDate) {
+      html += '<span class="text-success"><i class="bi bi-check-circle"></i> Up to date</span>';
+    } else {
+      html += '<span class="text-warning"><i class="bi bi-exclamation-circle"></i> ' + d.behind + ' update(s) available</span>';
+    }
+    html += '</span></div>';
+    html += '<div class="info-row"><span class="info-label">Local</span><span class="info-value"><span class="commit-hash">' + escHtml(d.localCommit) + '</span></span></div>';
+    if (d.remoteCommit) {
+      html += '<div class="info-row"><span class="info-label">Remote</span><span class="info-value"><span class="commit-hash">' + escHtml(d.remoteCommit) + '</span></span></div>';
+    }
+    document.getElementById('updateCheckContent').innerHTML = html;
+
+    // Show commits and actions
+    if (!d.upToDate && d.newCommits && d.newCommits.length > 0) {
+      var commitsCard = document.getElementById('newCommitsCard');
+      commitsCard.style.display = '';
+      document.getElementById('commitCount').textContent = d.newCommits.length;
+
+      var listHtml = d.newCommits.map(function(c) {
+        return '<div class="commit-item">' +
+          '<span class="commit-hash">' + escHtml(c.hash) + '</span>' +
+          '<div><div class="commit-msg">' + escHtml(c.subject) + '</div>' +
+          '<div class="commit-meta">' + escHtml(c.author) + ' \u2022 ' + escHtml(c.date) + '</div></div></div>';
+      }).join('');
+      document.getElementById('commitList').innerHTML = listHtml;
+      document.getElementById('updateActionsCard').style.display = '';
+
+      // Update header button
+      var headerBtn = document.getElementById('headerUpdateBtn');
+      headerBtn.classList.add('has-update');
+      document.getElementById('headerUpdateText').textContent = d.behind + ' update(s)';
+      var badge = document.getElementById('updateBadge');
+      badge.style.display = '';
+      badge.textContent = d.behind;
+
+      toast(d.behind + ' update(s) available!', 'warning');
+    } else {
+      document.getElementById('newCommitsCard').style.display = 'none';
+      document.getElementById('updateActionsCard').style.display = 'none';
+      document.getElementById('headerUpdateBtn').classList.remove('has-update');
+      document.getElementById('headerUpdateText').textContent = 'Up to date';
+      document.getElementById('updateBadge').style.display = 'none';
+      if (d.upToDate) toast('Already up to date!');
+    }
+  } catch (e) {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-cloud-arrow-down"></i> Check for Updates';
+    toast('Failed to check for updates.', 'danger');
+  }
+}
+
+async function pullUpdates() {
+  if (!confirm('Apply updates from GitHub? Your local data and configuration will be preserved.')) return;
+
+  var btn = document.getElementById('pullUpdatesBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Updating...';
+
+  var log = document.getElementById('updateLog');
+  var stepsDiv = document.getElementById('updateSteps');
+  log.style.display = '';
+  stepsDiv.innerHTML = '<div class="step-indicator pending"><i class="bi bi-hourglass-split"></i> Starting update process...</div>';
+
+  try {
+    var d = await api('/update/pull', { method: 'POST' });
+    btn.disabled = false;
+
+    if (d.success) {
+      btn.innerHTML = '<i class="bi bi-check-lg"></i> Update Complete';
+      var stepsHtml = (d.steps || []).map(function(s) {
+        var icon = s.success ? 'bi-check-circle-fill' : 'bi-x-circle-fill';
+        var cls = s.success ? 'success' : 'error';
+        var msg = s.message || s.output || s.step.replace(/_/g, ' ');
+        return '<div class="step-indicator ' + cls + '"><i class="bi ' + icon + '"></i> ' + escHtml(msg) + '</div>';
+      }).join('');
+      stepsDiv.innerHTML = stepsHtml;
+
+      toast('Update completed successfully!');
+
+      // Refresh git status
+      setTimeout(function() {
+        loadGitStatus();
+        document.getElementById('newCommitsCard').style.display = 'none';
+        document.getElementById('updateActionsCard').style.display = 'none';
+        document.getElementById('headerUpdateBtn').classList.remove('has-update');
+        document.getElementById('headerUpdateText').textContent = 'Up to date';
+        document.getElementById('updateBadge').style.display = 'none';
+      }, 1500);
+    } else {
+      btn.innerHTML = '<i class="bi bi-cloud-arrow-down"></i> Retry Update';
+      var stepsHtml = (d.steps || []).map(function(s) {
+        var icon = s.success ? 'bi-check-circle-fill' : 'bi-x-circle-fill';
+        var cls = s.success ? 'success' : 'error';
+        var msg = s.message || s.error || s.step.replace(/_/g, ' ');
+        return '<div class="step-indicator ' + cls + '"><i class="bi ' + icon + '"></i> ' + escHtml(msg) + '</div>';
+      }).join('');
+      if (d.error) stepsHtml += '<div class="step-indicator error"><i class="bi bi-x-circle-fill"></i> ' + escHtml(d.error) + '</div>';
+      stepsDiv.innerHTML = stepsHtml;
+      toast('Update failed. Check the log below.', 'danger');
+    }
+  } catch (e) {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-cloud-arrow-down"></i> Retry Update';
+    stepsDiv.innerHTML = '<div class="step-indicator error"><i class="bi bi-x-circle-fill"></i> Connection error: ' + escHtml(e.message) + '</div>';
+    toast('Update failed.', 'danger');
+  }
+}
+
 /* Settings */
 async function loadSystem() {
   var c = document.getElementById('settingsContent');
@@ -821,6 +1132,11 @@ setInterval(function() {
   var d = document.getElementById('sec-dashboard');
   if (d && d.classList.contains('active')) { loadStatus(); loadLogs(); }
 }, 10000);
+
+/* Background update check every 5 minutes */
+setTimeout(function() {
+  checkForUpdates();
+}, 60000);
 </script>
 </body>
 </html>
