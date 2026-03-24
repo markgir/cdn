@@ -82,7 +82,7 @@ router.post('/origins/import', (req, res) => {
         cacheTtl: o.cacheTtl,
       });
       added++;
-    } catch {
+    } catch (err) {
       skipped++;
     }
   }
