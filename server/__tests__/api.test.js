@@ -127,4 +127,75 @@ describe('Admin API routes', () => {
       expect(Array.isArray(res.body.logs)).toBe(true);
     });
   });
+
+  describe('System Info API', () => {
+    it('GET /api/system returns system information', async () => {
+      const res = await request(adminApp).get('/api/system').set(authHeader);
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('node');
+      expect(res.body).toHaveProperty('platform');
+      expect(res.body).toHaveProperty('arch');
+      expect(res.body).toHaveProperty('hostname');
+      expect(res.body).toHaveProperty('cpus');
+      expect(res.body).toHaveProperty('totalMemoryMB');
+      expect(res.body).toHaveProperty('freeMemoryMB');
+      expect(res.body).toHaveProperty('processMemoryMB');
+      expect(res.body).toHaveProperty('heapUsedMB');
+      expect(res.body).toHaveProperty('heapTotalMB');
+      expect(res.body).toHaveProperty('uptime');
+      expect(res.body).toHaveProperty('uptimeHuman');
+      expect(res.body).toHaveProperty('loadAvg');
+      expect(res.body).toHaveProperty('config');
+      expect(res.body.config).toHaveProperty('cdnPort');
+      expect(res.body.config).toHaveProperty('adminPort');
+      expect(res.body.config).toHaveProperty('cacheTtl');
+      expect(res.body.config).toHaveProperty('cacheMaxItems');
+    });
+
+    it('returns 401 without credentials', async () => {
+      const res = await request(adminApp).get('/api/system');
+      expect(res.status).toBe(401);
+    });
+  });
+
+  describe('Origins Export/Import API', () => {
+    it('GET /api/origins/export returns export data', async () => {
+      const res = await request(adminApp).get('/api/origins/export').set(authHeader);
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('version', 1);
+      expect(res.body).toHaveProperty('exportedAt');
+      expect(res.body).toHaveProperty('origins');
+      expect(Array.isArray(res.body.origins)).toBe(true);
+    });
+
+    it('POST /api/origins/import adds origins from payload', async () => {
+      const res = await request(adminApp)
+        .post('/api/origins/import')
+        .set(authHeader)
+        .send({
+          origins: [
+            { name: 'Import Test', originUrl: 'http://import.test', type: 'generic' },
+          ],
+        });
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('added', 1);
+      expect(res.body).toHaveProperty('skipped', 0);
+
+      // Clean up
+      const listRes = await request(adminApp).get('/api/origins').set(authHeader);
+      const imported = listRes.body.find((o) => o.name === 'Import Test');
+      if (imported) {
+        await request(adminApp).delete('/api/origins/' + imported.id).set(authHeader);
+      }
+    });
+
+    it('POST /api/origins/import rejects invalid data', async () => {
+      const res = await request(adminApp)
+        .post('/api/origins/import')
+        .set(authHeader)
+        .send({ origins: 'not-an-array' });
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty('error');
+    });
+  });
 });
