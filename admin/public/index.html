@@ -656,7 +656,12 @@ async function generateImage(e) {
 
   // Show preview
   const preview = document.getElementById('imagePreview');
-  preview.innerHTML = `<img src="${previewUrl}" style="max-width:100%;height:auto;border:1px solid #dee2e6;border-radius:8px;" alt="Generated Image" />`;
+  preview.textContent = '';
+  const img = document.createElement('img');
+  img.src = previewUrl;
+  img.style.cssText = 'max-width:100%;height:auto;border:1px solid #dee2e6;border-radius:8px;';
+  img.alt = 'Generated Image';
+  preview.appendChild(img);
 
   // Show actions
   document.getElementById('imageActions').style.cssText = '';

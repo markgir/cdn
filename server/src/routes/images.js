@@ -26,7 +26,7 @@ function buildSvg({ width, height, bgColor, textColor, text, fontSize }) {
   const fs = Math.min(Math.max(parseInt(fontSize, 10) || Math.min(w, h) / 8, 8), 200);
   const label = sanitizeText(text) || `${w} × ${h}`;
 
-  const lines = label.split('\\n');
+  const lines = label.split('\n');
   const lineHeight = fs * 1.3;
   const startY = h / 2 - ((lines.length - 1) * lineHeight) / 2;
 
@@ -82,6 +82,10 @@ function escXml(str) {
 // ── POST /api/images/generate ────────────────────────────────────────────────
 router.post('/generate', (req, res) => {
   const { width, height, bgColor, textColor, text, fontSize, format } = req.body;
+
+  if (format && format !== 'base64') {
+    return res.status(400).json({ error: 'Invalid format. Use "base64" or omit for raw SVG.' });
+  }
 
   const svg = buildSvg({ width, height, bgColor, textColor, text, fontSize });
 
