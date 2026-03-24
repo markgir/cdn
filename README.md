@@ -67,6 +67,8 @@ docker-compose up -d
 # Debug page   → http://localhost:3001/debug
 ```
 
+> **Default credentials:** username `admin` / password `changeme`. Change them via `ADMIN_USER` and `ADMIN_PASS` in your `.env` file.
+
 ---
 
 ## Quick Start (Node.js)
@@ -241,6 +243,8 @@ All settings are read from environment variables (or a `.env` file in the projec
 |---|---|---|
 | `CDN_PORT` | `3000` | CDN proxy port |
 | `ADMIN_PORT` | `3001` | Admin backoffice port |
+| `ADMIN_USER` | `admin` | Admin backoffice username (HTTP Basic Auth) |
+| `ADMIN_PASS` | `changeme` | Admin backoffice password (HTTP Basic Auth) |
 | `CACHE_TTL` | `3600` | Default cache TTL in seconds |
 | `CACHE_MAX_ITEMS` | `10000` | Maximum in-memory cache entries |
 | `LOG_LEVEL` | `info` | Winston log level (`debug`, `info`, `warn`, `error`) |
@@ -275,8 +279,7 @@ npm test       # Jest test suite
 
 ## Security Notes
 
-- The admin backoffice has no authentication by default. **For production**, place it behind a reverse proxy (nginx/Caddy) with HTTP Basic Auth or IP allowlisting.
-- Set a strong `ADMIN_SECRET` in `.env` if you extend the API with authentication middleware.
+- The admin backoffice is protected by HTTP Basic Auth. The default credentials are username `admin` and password `changeme`. **⚠️ For production, you must change these** via the `ADMIN_USER` and `ADMIN_PASS` environment variables in your `.env` file.
 - The CDN proxy forwards `X-Forwarded-For` headers to preserve client IPs at the origin.
 
 ---
