@@ -56,6 +56,39 @@ router.post('/origins', (req, res) => {
   }
 });
 
+// ── Export / Import Origins ──────────────────────────────────────────────────
+// NOTE: These must be defined before /origins/:id routes to avoid conflicts.
+router.get('/origins/export', (req, res) => {
+  const data = origins.list();
+  res.setHeader('Content-Disposition', 'attachment; filename="origins-backup.json"');
+  res.setHeader('Content-Type', 'application/json');
+  res.json({ version: 1, exportedAt: new Date().toISOString(), origins: data });
+});
+
+router.post('/origins/import', (req, res) => {
+  const { origins: importedOrigins } = req.body;
+  if (!Array.isArray(importedOrigins)) {
+    return res.status(400).json({ error: 'Invalid import data. Expected { origins: [...] }' });
+  }
+  let added = 0;
+  let skipped = 0;
+  for (const o of importedOrigins) {
+    try {
+      origins.add({
+        name: o.name,
+        originUrl: o.originUrl,
+        type: o.type,
+        cdnHostname: o.cdnHostname,
+        cacheTtl: o.cacheTtl,
+      });
+      added++;
+    } catch {
+      skipped++;
+    }
+  }
+  res.json({ added, skipped, message: `Imported ${added} origin(s), skipped ${skipped}.` });
+});
+
 router.put('/origins/:id', (req, res) => {
   try {
     const origin = origins.update(req.params.id, req.body);
@@ -188,38 +221,6 @@ router.get('/system', (req, res) => {
       logLevel: config.logging.level,
     },
   });
-});
-
-// ── Export / Import Origins ──────────────────────────────────────────────────
-router.get('/origins/export', (req, res) => {
-  const data = origins.list();
-  res.setHeader('Content-Disposition', 'attachment; filename="origins-backup.json"');
-  res.setHeader('Content-Type', 'application/json');
-  res.json({ version: 1, exportedAt: new Date().toISOString(), origins: data });
-});
-
-router.post('/origins/import', (req, res) => {
-  const { origins: importedOrigins } = req.body;
-  if (!Array.isArray(importedOrigins)) {
-    return res.status(400).json({ error: 'Invalid import data. Expected { origins: [...] }' });
-  }
-  let added = 0;
-  let skipped = 0;
-  for (const o of importedOrigins) {
-    try {
-      origins.add({
-        name: o.name,
-        originUrl: o.originUrl,
-        type: o.type,
-        cdnHostname: o.cdnHostname,
-        cacheTtl: o.cacheTtl,
-      });
-      added++;
-    } catch {
-      skipped++;
-    }
-  }
-  res.json({ added, skipped, message: `Imported ${added} origin(s), skipped ${skipped}.` });
 });
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
