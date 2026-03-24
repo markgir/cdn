@@ -161,6 +161,67 @@ router.get('/logs', (req, res) => {
   res.json({ total: logs.length, logs: logs.slice(0, parseInt(limit, 10)) });
 });
 
+// ── System Info ──────────────────────────────────────────────────────────────
+router.get('/system', (req, res) => {
+  const config = require('../config');
+  const os = require('os');
+  res.json({
+    node: process.version,
+    platform: process.platform,
+    arch: process.arch,
+    hostname: os.hostname(),
+    cpus: os.cpus().length,
+    totalMemoryMB: Math.round(os.totalmem() / 1024 / 1024),
+    freeMemoryMB: Math.round(os.freemem() / 1024 / 1024),
+    processMemoryMB: Math.round(process.memoryUsage().rss / 1024 / 1024),
+    heapUsedMB: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+    heapTotalMB: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
+    uptime: Math.floor(process.uptime()),
+    uptimeHuman: formatUptime(process.uptime()),
+    loadAvg: os.loadavg().map(l => l.toFixed(2)),
+    config: {
+      cdnPort: config.cdn.port,
+      adminPort: config.admin.port,
+      cacheTtl: config.cache.defaultTtl,
+      cacheMaxItems: config.cache.maxItems,
+      proxyTimeout: config.proxy.timeout,
+      logLevel: config.logging.level,
+    },
+  });
+});
+
+// ── Export / Import Origins ──────────────────────────────────────────────────
+router.get('/origins/export', (req, res) => {
+  const data = origins.list();
+  res.setHeader('Content-Disposition', 'attachment; filename="origins-backup.json"');
+  res.setHeader('Content-Type', 'application/json');
+  res.json({ version: 1, exportedAt: new Date().toISOString(), origins: data });
+});
+
+router.post('/origins/import', (req, res) => {
+  const { origins: importedOrigins } = req.body;
+  if (!Array.isArray(importedOrigins)) {
+    return res.status(400).json({ error: 'Invalid import data. Expected { origins: [...] }' });
+  }
+  let added = 0;
+  let skipped = 0;
+  for (const o of importedOrigins) {
+    try {
+      origins.add({
+        name: o.name,
+        originUrl: o.originUrl,
+        type: o.type,
+        cdnHostname: o.cdnHostname,
+        cacheTtl: o.cacheTtl,
+      });
+      added++;
+    } catch {
+      skipped++;
+    }
+  }
+  res.json({ added, skipped, message: `Imported ${added} origin(s), skipped ${skipped}.` });
+});
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function formatUptime(seconds) {
   const d = Math.floor(seconds / 86400);

@@ -43,7 +43,7 @@
       --input-bg: #334155;
       --badge-muted-bg: #334155;
     }
-    * { transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed); }
+    body, .card, .btn, .form-control, .form-select, .table, .modal-content, #header, #main, .theme-toggle, .nav-item a, .stat-icon, .badge { transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed); }
     body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--content-bg); color: var(--text-primary); margin: 0; overflow-x: hidden; }
 
     #sidebar {
@@ -453,8 +453,9 @@
           <input type="number" class="form-control" id="oCacheTtl" placeholder="3600" min="60" />
         </div>
         <div class="form-check form-switch">
-          <input type="checkbox" class="form-check-input" id="oActive" checked />
+          <input type="checkbox" class="form-check-input" id="oActive" checked aria-describedby="oActiveHelp" />
           <label class="form-check-label" for="oActive">Active</label>
+          <small id="oActiveHelp" class="d-block" style="color:var(--text-secondary)">Inactive origins will not serve traffic.</small>
         </div>
       </div>
       <div class="modal-footer">
@@ -587,20 +588,30 @@ async function loadOrigins() {
     }
     c.innerHTML = origins.map(function(o) {
       var tc = o.type === 'woocommerce' ? 'woocommerce' : o.type === 'prestashop' ? 'prestashop' : 'generic';
-      var oj = JSON.stringify(o).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;').replace(/"/g,'&quot;');
+      var safeJson = escHtml(JSON.stringify(o));
+      var safeId = escHtml(o.id);
+      var safeName = escHtml(o.name);
       return '<div class="card origin-card mb-3"><div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">' +
         '<div class="d-flex gap-3 align-items-start"><div class="status-dot mt-2 ' + (o.active ? 'active' : 'inactive') + '"></div><div>' +
-        '<div class="d-flex align-items-center gap-2 mb-1 flex-wrap"><span class="fw-semibold" style="font-size:1.05rem">' + escHtml(o.name) + '</span><span class="type-badge ' + tc + '">' + escHtml(o.type) + '</span></div>' +
+        '<div class="d-flex align-items-center gap-2 mb-1 flex-wrap"><span class="fw-semibold" style="font-size:1.05rem">' + safeName + '</span><span class="type-badge ' + tc + '">' + escHtml(o.type) + '</span></div>' +
         '<div class="font-monospace small" style="color:var(--text-secondary)">' + escHtml(o.originUrl) + '</div>' +
         (o.cdnHostname ? '<div class="small" style="color:var(--accent)">CDN: ' + escHtml(o.cdnHostname) + '</div>' : '') +
-        '<div class="small mt-1" style="color:var(--text-secondary)">ID: <code>' + escHtml(o.id) + '</code> \u2022 TTL: ' + (o.cacheTtl || 'default') + 's</div>' +
+        '<div class="small mt-1" style="color:var(--text-secondary)">ID: <code>' + safeId + '</code> \u2022 TTL: ' + (o.cacheTtl || 'default') + 's</div>' +
         '</div></div>' +
         '<div class="d-flex gap-2 flex-wrap align-items-start">' +
-        '<button class="btn btn-sm btn-outline-info" onclick="testOrigin(\'' + escHtml(o.id) + '\', this)"><i class="bi bi-wifi"></i> Test</button>' +
-        '<button class="btn btn-sm btn-outline-secondary" onclick="openEditOriginModal(JSON.parse(this.getAttribute(\'data-o\')))" data-o="' + oj + '"><i class="bi bi-pencil"></i> Edit</button>' +
-        '<button class="btn btn-sm btn-outline-danger" onclick="deleteOrigin(\'' + escHtml(o.id) + '\', \'' + escHtml(o.name).replace(/'/g, "\\'") + '\')"><i class="bi bi-trash"></i></button>' +
+        '<button class="btn btn-sm btn-outline-info" data-action="test" data-id="' + safeId + '"><i class="bi bi-wifi"></i> Test</button>' +
+        '<button class="btn btn-sm btn-outline-secondary" data-action="edit" data-o="' + safeJson + '"><i class="bi bi-pencil"></i> Edit</button>' +
+        '<button class="btn btn-sm btn-outline-danger" data-action="delete" data-id="' + safeId + '" data-name="' + safeName + '"><i class="bi bi-trash"></i></button>' +
         '</div></div></div>';
     }).join('');
+    c.querySelectorAll('[data-action]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var action = btn.getAttribute('data-action');
+        if (action === 'test') testOrigin(btn.getAttribute('data-id'), btn);
+        else if (action === 'edit') openEditOriginModal(JSON.parse(btn.getAttribute('data-o')));
+        else if (action === 'delete') deleteOrigin(btn.getAttribute('data-id'), btn.getAttribute('data-name'));
+      });
+    });
   } catch (e) { c.innerHTML = '<div class="text-center text-danger py-4">Failed to load origins.</div>'; }
 }
 
@@ -708,9 +719,11 @@ async function loadKeys() {
       return;
     }
     tb.innerHTML = d.keys.map(function(k) {
-      var ek = escHtml(k).replace(/'/g, "\\'");
-      return '<tr><td class="font-monospace small">' + escHtml(k) + '</td><td class="text-end"><button class="btn btn-sm btn-outline-danger py-0 px-1" onclick="purgeKey(\'' + ek + '\')"><i class="bi bi-trash"></i></button></td></tr>';
+      return '<tr><td class="font-monospace small">' + escHtml(k) + '</td><td class="text-end"><button class="btn btn-sm btn-outline-danger py-0 px-1" data-purge-key="' + escHtml(k) + '"><i class="bi bi-trash"></i></button></td></tr>';
     }).join('');
+    tb.querySelectorAll('[data-purge-key]').forEach(function(btn) {
+      btn.addEventListener('click', function() { purgeKey(btn.getAttribute('data-purge-key')); });
+    });
     if (d.total > 200) tb.innerHTML += '<tr><td colspan="2" class="text-center small" style="color:var(--text-secondary)">\u2026 and ' + (d.total - 200) + ' more entries</td></tr>';
   } catch (e) { console.error('Keys error:', e); }
 }
