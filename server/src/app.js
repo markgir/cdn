@@ -13,6 +13,7 @@ const { adminRouter } = require('./routes/admin');
 const { debugRouter } = require('./routes/debug');
 const { apiRouter } = require('./routes/api');
 const { imagesRouter } = require('./routes/images');
+const { updateRouter } = require('./routes/update');
 const { requestLogger } = require('./logger');
 const config = require('./config');
 
@@ -80,6 +81,7 @@ adminApp.use(express.static(path.join(__dirname, '../../admin/public')));
 // Mount routes
 adminApp.use('/api', apiRouter);
 adminApp.use('/api/images', imagesRouter);
+adminApp.use('/api/update', updateRouter);
 adminApp.use('/debug', adminPageLimiter, debugRouter);
 adminApp.use('/', adminPageLimiter, adminRouter);
 
