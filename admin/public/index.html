@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,279 +9,360 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" integrity="sha384-tViUnnbYAV00ruLTd/hcZKbKMNFQMasXqTCKb/EJRC0x4c5aZHBYRXflUEQBikgm" crossorigin="anonymous" />
   <style>
     :root {
-      --primary: #0d6efd;
-      --sidebar-width: 240px;
+      --sidebar-w: 260px;
+      --header-h: 56px;
+      --sidebar-bg: #111827;
+      --sidebar-hover: #1f2937;
+      --sidebar-active: #1e3a5f;
+      --sidebar-text: #9ca3af;
+      --sidebar-text-active: #ffffff;
+      --accent: #3b82f6;
+      --accent-light: #60a5fa;
+      --card-radius: 12px;
+      --transition-speed: 0.2s;
+      --content-bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --table-hover: #f8fafc;
+      --header-bg: #ffffff;
+      --header-border: #e2e8f0;
+      --input-bg: #ffffff;
+      --badge-muted-bg: #f1f5f9;
     }
-    body { background: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+    [data-bs-theme="dark"] {
+      --content-bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --table-hover: #334155;
+      --header-bg: #1e293b;
+      --header-border: #334155;
+      --input-bg: #334155;
+      --badge-muted-bg: #334155;
+    }
+    body, .card, .btn, .form-control, .form-select, .table, .modal-content, #header, #main, .theme-toggle, .nav-item a, .stat-icon, .badge { transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed); }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--content-bg); color: var(--text-primary); margin: 0; overflow-x: hidden; }
+
     #sidebar {
-      width: var(--sidebar-width); min-height: 100vh; background: #1e2a3a; position: fixed; left:0; top:0; z-index:1000;
+      width: var(--sidebar-w); height: 100vh; background: var(--sidebar-bg);
+      position: fixed; left: 0; top: 0; z-index: 1040; display: flex; flex-direction: column;
+      transition: transform var(--transition-speed);
     }
-    #sidebar .logo { padding: 24px 20px 12px; color:#fff; font-size:1.3rem; font-weight:700; border-bottom:1px solid #2d3f52; }
-    #sidebar .logo span { color: #4d9fff; }
-    #sidebar .nav-link { color: #9ab0c8; padding: 10px 20px; display:flex; align-items:center; gap:10px; border-radius:0; }
-    #sidebar .nav-link:hover, #sidebar .nav-link.active { color:#fff; background:#2d3f52; }
-    #sidebar .nav-link i { font-size:1.1rem; }
-    #main { margin-left: var(--sidebar-width); padding: 24px; }
-    .stat-card { border:none; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.08); }
-    .stat-card .card-body { padding:20px; }
-    .stat-num { font-size:2rem; font-weight:700; }
-    .badge-hit { background:#198754; }
-    .badge-miss { background:#6c757d; }
-    .badge-stored { background:#0d6efd; }
-    .table-sm td, .table-sm th { vertical-align:middle; }
-    .origin-type { font-size:.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.5px; }
-    .section { display:none; }
-    .section.active { display:block; }
-    #toastContainer { position:fixed; bottom:24px; right:24px; z-index:9999; min-width:260px; }
+    .sidebar-brand { padding: 20px 24px; border-bottom: 1px solid #1f2937; display: flex; align-items: center; gap: 12px; }
+    .sidebar-brand-icon { width: 36px; height: 36px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.1rem; }
+    .sidebar-brand-text { color: #fff; font-weight: 700; font-size: 1.1rem; }
+    .sidebar-brand-text span { color: var(--accent-light); }
+    .sidebar-version { font-size: 0.65rem; background: #1f2937; color: #9ca3af; padding: 2px 8px; border-radius: 6px; margin-left: auto; }
+    .sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
+    .sidebar-nav .nav-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: #4b5563; padding: 16px 24px 6px; font-weight: 600; }
+    .nav-item a {
+      display: flex; align-items: center; gap: 12px; padding: 10px 24px; color: var(--sidebar-text);
+      text-decoration: none; font-size: 0.9rem; border-left: 3px solid transparent;
+      transition: all var(--transition-speed);
+    }
+    .nav-item a:hover { background: var(--sidebar-hover); color: #d1d5db; }
+    .nav-item a.active { background: var(--sidebar-active); color: var(--sidebar-text-active); border-left-color: var(--accent); }
+    .nav-item a i { font-size: 1.15rem; width: 22px; text-align: center; }
+    .sidebar-footer { padding: 16px 24px; border-top: 1px solid #1f2937; text-align: center; }
+    .sidebar-footer small { color: #6b7280; font-size: 0.75rem; }
+    .sidebar-footer a { color: var(--accent-light); text-decoration: none; }
+
+    #header {
+      position: fixed; top: 0; left: var(--sidebar-w); right: 0; height: var(--header-h); z-index: 1030;
+      background: var(--header-bg); border-bottom: 1px solid var(--header-border);
+      display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
+      transition: left var(--transition-speed), background-color var(--transition-speed);
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .breadcrumb-section { font-weight: 600; font-size: 1rem; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+    .breadcrumb-section i { color: var(--accent); }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .refresh-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; display: inline-block; animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+    .theme-toggle { background: none; border: 1px solid var(--card-border); border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--text-primary); font-size: 1rem; transition: all var(--transition-speed); }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .hamburger { display: none; background: none; border: none; font-size: 1.4rem; color: var(--text-primary); cursor: pointer; padding: 4px; }
+
+    #main { margin-left: var(--sidebar-w); margin-top: var(--header-h); padding: 28px; min-height: calc(100vh - var(--header-h)); transition: margin-left var(--transition-speed); }
+    .section { display: none; }
+    .section.active { display: block; animation: fadeSection 0.25s ease; }
+    @keyframes fadeSection { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+    .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--card-radius); box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: all var(--transition-speed); }
+    .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .stat-card { position: relative; overflow: hidden; }
+    .stat-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+    .stat-card.border-green::before { background: #22c55e; }
+    .stat-card.border-gray::before { background: #6b7280; }
+    .stat-card.border-blue::before { background: #3b82f6; }
+    .stat-card.border-cyan::before { background: #06b6d4; }
+    .stat-card .card-body { padding: 20px 20px 20px 24px; }
+    .stat-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+    .stat-icon.green { background: #dcfce7; color: #16a34a; }
+    .stat-icon.gray { background: #f3f4f6; color: #6b7280; }
+    .stat-icon.blue { background: #dbeafe; color: #2563eb; }
+    .stat-icon.cyan { background: #cffafe; color: #0891b2; }
+    [data-bs-theme="dark"] .stat-icon.green { background: #14532d; }
+    [data-bs-theme="dark"] .stat-icon.gray { background: #374151; }
+    [data-bs-theme="dark"] .stat-icon.blue { background: #1e3a5f; }
+    [data-bs-theme="dark"] .stat-icon.cyan { background: #164e63; }
+    .stat-num { font-size: 1.75rem; font-weight: 700; line-height: 1.2; }
+
+    .table { color: var(--text-primary); }
+    .table th { font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); border-bottom-width: 2px; }
+    .table td { vertical-align: middle; font-size: 0.875rem; }
+    .table-hover tbody tr:hover { background: var(--table-hover); }
+    [data-bs-theme="dark"] .table-light { background: #334155; color: #e2e8f0; }
+    [data-bs-theme="dark"] .table { --bs-table-bg: var(--card-bg); --bs-table-hover-bg: var(--table-hover); }
+
+    .form-control, .form-select { background: var(--input-bg); border-color: var(--card-border); color: var(--text-primary); border-radius: 8px; }
+    .form-control:focus, .form-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+    [data-bs-theme="dark"] .form-control, [data-bs-theme="dark"] .form-select { background: var(--input-bg); border-color: var(--card-border); color: var(--text-primary); }
+    [data-bs-theme="dark"] .modal-content { background: var(--card-bg); color: var(--text-primary); }
+    [data-bs-theme="dark"] .modal-header, [data-bs-theme="dark"] .modal-footer { border-color: var(--card-border); }
+    [data-bs-theme="dark"] .btn-close { filter: invert(1); }
+
+    #toastContainer { position: fixed; top: 72px; right: 24px; z-index: 9999; min-width: 280px; }
+    .toast { animation: slideInToast 0.3s ease; border-radius: 10px; }
+    @keyframes slideInToast { from { transform: translateX(100%); opacity:0; } to { transform: translateX(0); opacity:1; } }
+
+    .origin-card { border-radius: var(--card-radius); }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+    .status-dot.active { background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.2); }
+    .status-dot.inactive { background: #9ca3af; }
+    .type-badge { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 10px; border-radius: 6px; }
+    .type-badge.woocommerce { background: #dbeafe; color: #1d4ed8; }
+    .type-badge.prestashop { background: #fef3c7; color: #92400e; }
+    .type-badge.generic { background: var(--badge-muted-bg); color: var(--text-secondary); }
+    [data-bs-theme="dark"] .type-badge.woocommerce { background: #1e3a5f; color: #93c5fd; }
+    [data-bs-theme="dark"] .type-badge.prestashop { background: #451a03; color: #fbbf24; }
+
+    .settings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--card-border); font-size: 0.875rem; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { color: var(--text-secondary); font-weight: 500; }
+    .info-value { font-weight: 600; color: var(--text-primary); font-family: 'SFMono-Regular', monospace; }
+
+    .btn { border-radius: 8px; font-size: 0.875rem; font-weight: 500; transition: all var(--transition-speed); }
+    .btn-primary { background: var(--accent); border-color: var(--accent); }
+    .btn-primary:hover { background: #2563eb; border-color: #2563eb; }
+
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1035; }
+    @media (max-width: 991.98px) {
+      #sidebar { transform: translateX(-100%); }
+      #sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.show { display: block; }
+      #header { left: 0; }
+      #main { margin-left: 0; }
+      .hamburger { display: block; }
+      .settings-grid { grid-template-columns: 1fr; }
+    }
+
+    .section-loading { display: flex; justify-content: center; padding: 48px; }
+    .mem-bar { height: 8px; border-radius: 4px; background: var(--card-border); overflow: hidden; }
+    .mem-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
   </style>
 </head>
 <body>
 
-<!-- Sidebar -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <nav id="sidebar">
-  <div class="logo">CDN <span>Manager</span></div>
-  <ul class="nav flex-column mt-3">
-    <li class="nav-item">
-      <a class="nav-link active" href="#" data-section="dashboard">
-        <i class="bi bi-speedometer2"></i> Dashboard
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#" data-section="origins">
-        <i class="bi bi-hdd-network"></i> Origins
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#" data-section="cache">
-        <i class="bi bi-database"></i> Cache
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="/debug">
-        <i class="bi bi-bug"></i> Debug
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#" data-section="images">
-        <i class="bi bi-image"></i> Images
-      </a>
-    </li>
-    <li class="nav-item mt-3" style="border-top:1px solid #2d3f52;">
-      <a class="nav-link" href="#" data-section="integration">
-        <i class="bi bi-plug"></i> Integration
-      </a>
-    </li>
-  </ul>
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-icon"><i class="bi bi-hdd-stack"></i></div>
+    <div class="sidebar-brand-text">CDN <span>Manager</span></div>
+    <span class="sidebar-version">v1.0.0</span>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-label">Main</div>
+    <div class="nav-item"><a href="#" class="active" data-section="dashboard"><i class="bi bi-grid-1x2"></i> Dashboard</a></div>
+    <div class="nav-item"><a href="#" data-section="origins"><i class="bi bi-hdd-network"></i> Origins</a></div>
+    <div class="nav-item"><a href="#" data-section="cache"><i class="bi bi-database"></i> Cache</a></div>
+    <div class="nav-item"><a href="/debug"><i class="bi bi-bug"></i> Debug</a></div>
+    <div class="nav-label">Tools</div>
+    <div class="nav-item"><a href="#" data-section="images"><i class="bi bi-image"></i> Images</a></div>
+    <div class="nav-item"><a href="#" data-section="integration"><i class="bi bi-plug"></i> Integration</a></div>
+    <div class="nav-item"><a href="#" data-section="settings"><i class="bi bi-gear"></i> Settings</a></div>
+  </div>
+  <div class="sidebar-footer">
+    <small>Powered by <a href="https://iddigital.pt" target="_blank">iddigital.pt</a></small><br>
+    <small class="text-muted">CDN Manager v1.0.0</small>
+  </div>
 </nav>
 
-<!-- Main content -->
+<header id="header">
+  <div class="header-left">
+    <button class="hamburger" id="hamburgerBtn"><i class="bi bi-list"></i></button>
+    <div class="breadcrumb-section" id="breadcrumb"><i class="bi bi-grid-1x2"></i> Dashboard</div>
+  </div>
+  <div class="header-right">
+    <span class="d-none d-sm-flex align-items-center gap-2 small" style="color:var(--text-secondary)"><span class="refresh-dot" id="refreshDot"></span> Auto-refresh</span>
+    <button class="theme-toggle" id="themeToggle" title="Toggle dark mode"><i class="bi bi-moon-stars"></i></button>
+  </div>
+</header>
+
 <div id="main">
 
-  <!-- ── Dashboard Section ─────────────────────────────────────────────── -->
+  <!-- Dashboard -->
   <section id="sec-dashboard" class="section active">
-    <h4 class="mb-4 fw-bold">Dashboard</h4>
-
-    <div class="row g-3 mb-4" id="statsRow">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <h5 class="fw-bold mb-0">Dashboard Overview</h5>
+      <button class="btn btn-sm btn-outline-secondary" onclick="loadStatus();loadLogs()"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+    </div>
+    <div class="row g-3 mb-4">
       <div class="col-sm-6 col-xl-3">
-        <div class="card stat-card">
-          <div class="card-body">
-            <div class="text-muted small mb-1">Cache Hits</div>
-            <div class="stat-num text-success" id="statHits">—</div>
-            <div class="small text-muted">Hit Rate: <span id="statHitRate">—</span></div>
+        <div class="card stat-card border-green">
+          <div class="card-body d-flex align-items-start gap-3">
+            <div class="stat-icon green"><i class="bi bi-check-circle"></i></div>
+            <div><div class="small mb-1" style="color:var(--text-secondary)">Cache Hits</div><div class="stat-num" id="statHits">&mdash;</div><div class="small" style="color:var(--text-secondary)">Rate: <strong id="statHitRate">&mdash;</strong></div></div>
           </div>
         </div>
       </div>
       <div class="col-sm-6 col-xl-3">
-        <div class="card stat-card">
-          <div class="card-body">
-            <div class="text-muted small mb-1">Cache Misses</div>
-            <div class="stat-num text-secondary" id="statMisses">—</div>
+        <div class="card stat-card border-gray">
+          <div class="card-body d-flex align-items-start gap-3">
+            <div class="stat-icon gray"><i class="bi bi-x-circle"></i></div>
+            <div><div class="small mb-1" style="color:var(--text-secondary)">Cache Misses</div><div class="stat-num" id="statMisses">&mdash;</div><div class="small" style="color:var(--text-secondary)">Errors: <strong id="statErrors">&mdash;</strong></div></div>
           </div>
         </div>
       </div>
       <div class="col-sm-6 col-xl-3">
-        <div class="card stat-card">
-          <div class="card-body">
-            <div class="text-muted small mb-1">Cached Items</div>
-            <div class="stat-num text-primary" id="statSize">—</div>
+        <div class="card stat-card border-blue">
+          <div class="card-body d-flex align-items-start gap-3">
+            <div class="stat-icon blue"><i class="bi bi-archive"></i></div>
+            <div><div class="small mb-1" style="color:var(--text-secondary)">Cached Items</div><div class="stat-num" id="statSize">&mdash;</div><div class="small" style="color:var(--text-secondary)">Max: <strong id="statMaxItems">&mdash;</strong></div></div>
           </div>
         </div>
       </div>
       <div class="col-sm-6 col-xl-3">
-        <div class="card stat-card">
-          <div class="card-body">
-            <div class="text-muted small mb-1">Uptime</div>
-            <div class="stat-num text-info" id="statUptime">—</div>
-            <div class="small text-muted">Memory: <span id="statMem">—</span> MB</div>
+        <div class="card stat-card border-cyan">
+          <div class="card-body d-flex align-items-start gap-3">
+            <div class="stat-icon cyan"><i class="bi bi-clock-history"></i></div>
+            <div><div class="small mb-1" style="color:var(--text-secondary)">Uptime</div><div class="stat-num" id="statUptime">&mdash;</div><div class="small" style="color:var(--text-secondary)">Mem: <strong id="statMem">&mdash;</strong> MB</div></div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Recent requests table -->
-    <div class="card border-0 shadow-sm">
-      <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <span class="fw-semibold">Recent Requests</span>
-        <button class="btn btn-sm btn-outline-secondary" onclick="loadLogs()">
-          <i class="bi bi-arrow-clockwise"></i> Refresh
-        </button>
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center" style="background:var(--card-bg);border-bottom:1px solid var(--card-border);border-radius:var(--card-radius) var(--card-radius) 0 0;">
+        <span class="fw-semibold"><i class="bi bi-activity me-2" style="color:var(--accent)"></i>Recent Requests</span>
+        <button class="btn btn-sm btn-outline-secondary" onclick="loadLogs()"><i class="bi bi-arrow-clockwise"></i></button>
       </div>
       <div class="table-responsive">
-        <table class="table table-sm table-hover mb-0">
-          <thead class="table-light">
-            <tr>
-              <th>Time</th>
-              <th>Method</th>
-              <th>URL</th>
-              <th>Status</th>
-              <th>Cache</th>
-              <th>Duration</th>
-              <th>Origin</th>
-            </tr>
-          </thead>
-          <tbody id="logsBody">
-            <tr><td colspan="7" class="text-center text-muted py-4">No requests yet…</td></tr>
-          </tbody>
+        <table class="table table-hover mb-0">
+          <thead><tr><th>Time</th><th>Method</th><th>URL</th><th>Status</th><th>Cache</th><th>Duration</th><th>Origin</th></tr></thead>
+          <tbody id="logsBody"><tr><td colspan="7" class="text-center py-4" style="color:var(--text-secondary)">Loading&hellip;</td></tr></tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- ── Origins Section ──────────────────────────────────────────────── -->
+  <!-- Origins -->
   <section id="sec-origins" class="section">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h4 class="fw-bold mb-0">Origins</h4>
-      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#originModal" onclick="openAddOriginModal()">
-        <i class="bi bi-plus-lg"></i> Add Origin
-      </button>
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <h5 class="fw-bold mb-0">Origin Servers</h5>
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-sm btn-outline-success" onclick="exportOrigins()"><i class="bi bi-download"></i> Export</button>
+        <button class="btn btn-sm btn-outline-info" onclick="document.getElementById('importFile').click()"><i class="bi bi-upload"></i> Import</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importOrigins(this)" />
+        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#originModal" onclick="openAddOriginModal()"><i class="bi bi-plus-lg"></i> Add Origin</button>
+      </div>
     </div>
-    <div id="originsList">
-      <div class="text-center text-muted py-5">Loading…</div>
-    </div>
+    <div id="originsList"><div class="section-loading"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div></div>
   </section>
 
-  <!-- ── Cache Section ────────────────────────────────────────────────── -->
+  <!-- Cache -->
   <section id="sec-cache" class="section">
-    <h4 class="fw-bold mb-4">Cache Management</h4>
-
+    <h5 class="fw-bold mb-4">Cache Management</h5>
     <div class="row g-3 mb-4">
       <div class="col-md-6">
-        <div class="card border-0 shadow-sm p-3">
-          <h6 class="fw-semibold">Purge by Key / Prefix</h6>
+        <div class="card p-4">
+          <h6 class="fw-semibold mb-2"><i class="bi bi-search me-2" style="color:var(--accent)"></i>Purge by Key / Prefix</h6>
           <div class="input-group mt-2">
             <input type="text" class="form-control" id="purgeInput" placeholder="origin-id::/ or full key" />
-            <button class="btn btn-warning" onclick="purgeCache()">Purge</button>
+            <button class="btn btn-warning" onclick="purgeCache()"><i class="bi bi-trash3"></i> Purge</button>
           </div>
-          <small class="text-muted mt-1">Use a prefix ending in <code>::</code> to purge all keys for an origin.</small>
+          <small class="mt-2 d-block" style="color:var(--text-secondary)">Use a prefix ending in <code>::</code> to purge all keys for an origin.</small>
         </div>
       </div>
       <div class="col-md-6">
-        <div class="card border-0 shadow-sm p-3">
-          <h6 class="fw-semibold">Flush All Cache</h6>
-          <p class="text-muted small">Remove every cached entry from memory.</p>
+        <div class="card p-4">
+          <h6 class="fw-semibold mb-2"><i class="bi bi-exclamation-triangle me-2 text-danger"></i>Flush All Cache</h6>
+          <p class="small mb-3" style="color:var(--text-secondary)">Remove every cached entry from memory. This cannot be undone.</p>
           <button class="btn btn-danger" onclick="flushCache()"><i class="bi bi-trash3"></i> Flush All</button>
         </div>
       </div>
     </div>
-
-    <div class="card border-0 shadow-sm">
-      <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <span class="fw-semibold">Cache Keys</span>
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2" style="background:var(--card-bg);border-bottom:1px solid var(--card-border);border-radius:var(--card-radius) var(--card-radius) 0 0;">
+        <span class="fw-semibold"><i class="bi bi-key me-2" style="color:var(--accent)"></i>Cache Keys</span>
         <div class="d-flex gap-2 align-items-center">
-          <input class="form-control form-control-sm" id="keySearch" placeholder="Filter…" oninput="loadKeys()" style="width:180px" />
-          <button class="btn btn-sm btn-outline-secondary" onclick="loadKeys()">
-            <i class="bi bi-arrow-clockwise"></i>
-          </button>
+          <input class="form-control form-control-sm" id="keySearch" placeholder="Filter keys..." oninput="loadKeys()" style="width:200px" />
+          <button class="btn btn-sm btn-outline-secondary" onclick="loadKeys()"><i class="bi bi-arrow-clockwise"></i></button>
         </div>
       </div>
-      <div class="table-responsive" style="max-height:420px;overflow-y:auto;">
-        <table class="table table-sm mb-0">
-          <thead class="table-light sticky-top">
-            <tr><th>Cache Key</th><th class="text-end" style="width:100px">Action</th></tr>
-          </thead>
-          <tbody id="keysBody">
-            <tr><td colspan="2" class="text-center text-muted py-4">No keys yet…</td></tr>
-          </tbody>
+      <div class="table-responsive" style="max-height:450px;overflow-y:auto;">
+        <table class="table table-hover mb-0">
+          <thead class="sticky-top" style="background:var(--card-bg)"><tr><th>Cache Key</th><th class="text-end" style="width:100px">Action</th></tr></thead>
+          <tbody id="keysBody"><tr><td colspan="2" class="text-center py-4" style="color:var(--text-secondary)">No keys loaded.</td></tr></tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- ── Images Section ──────────────────────────────────────────────── -->
+  <!-- Images -->
   <section id="sec-images" class="section">
-    <h4 class="fw-bold mb-4">Image Generator</h4>
-    <p class="text-muted mb-4">Generate placeholder and banner images for your store. Useful for product placeholders, social media banners, and promotional graphics.</p>
-
+    <h5 class="fw-bold mb-2">Image Generator</h5>
+    <p class="mb-4" style="color:var(--text-secondary)">Generate SVG placeholder and banner images for your projects.</p>
     <div class="row g-4">
       <div class="col-lg-5">
-        <div class="card border-0 shadow-sm p-4">
-          <h6 class="fw-semibold mb-3"><i class="bi bi-sliders"></i> Settings</h6>
+        <div class="card p-4">
+          <h6 class="fw-semibold mb-3"><i class="bi bi-sliders me-2" style="color:var(--accent)"></i>Settings</h6>
           <form id="imageForm" onsubmit="generateImage(event)">
             <div class="row g-2 mb-3">
-              <div class="col-6">
-                <label class="form-label small">Width (px)</label>
-                <input type="number" class="form-control" id="imgWidth" value="600" min="1" max="4096" />
-              </div>
-              <div class="col-6">
-                <label class="form-label small">Height (px)</label>
-                <input type="number" class="form-control" id="imgHeight" value="400" min="1" max="4096" />
-              </div>
+              <div class="col-6"><label class="form-label small">Width (px)</label><input type="number" class="form-control" id="imgWidth" value="600" min="1" max="4096" /></div>
+              <div class="col-6"><label class="form-label small">Height (px)</label><input type="number" class="form-control" id="imgHeight" value="400" min="1" max="4096" /></div>
             </div>
             <div class="row g-2 mb-3">
               <div class="col-6">
-                <label class="form-label small">Background Color</label>
-                <div class="input-group">
-                  <input type="color" class="form-control form-control-color" id="imgBgPicker" value="#cccccc" onchange="document.getElementById('imgBgColor').value=this.value" />
-                  <input type="text" class="form-control" id="imgBgColor" value="#cccccc" placeholder="#cccccc" onchange="document.getElementById('imgBgPicker').value=this.value" />
-                </div>
+                <label class="form-label small">Background</label>
+                <div class="input-group"><input type="color" class="form-control form-control-color" id="imgBgPicker" value="#cccccc" onchange="document.getElementById('imgBgColor').value=this.value" /><input type="text" class="form-control" id="imgBgColor" value="#cccccc" onchange="document.getElementById('imgBgPicker').value=this.value" /></div>
               </div>
               <div class="col-6">
                 <label class="form-label small">Text Color</label>
-                <div class="input-group">
-                  <input type="color" class="form-control form-control-color" id="imgTcPicker" value="#333333" onchange="document.getElementById('imgTextColor').value=this.value" />
-                  <input type="text" class="form-control" id="imgTextColor" value="#333333" placeholder="#333333" onchange="document.getElementById('imgTcPicker').value=this.value" />
-                </div>
+                <div class="input-group"><input type="color" class="form-control form-control-color" id="imgTcPicker" value="#333333" onchange="document.getElementById('imgTextColor').value=this.value" /><input type="text" class="form-control" id="imgTextColor" value="#333333" onchange="document.getElementById('imgTcPicker').value=this.value" /></div>
               </div>
             </div>
-            <div class="mb-3">
-              <label class="form-label small">Text (leave empty for dimensions)</label>
-              <input type="text" class="form-control" id="imgText" placeholder="e.g. Product Image" maxlength="200" />
-            </div>
-            <div class="mb-3">
-              <label class="form-label small">Font Size (px, 0 = auto)</label>
-              <input type="number" class="form-control" id="imgFontSize" value="0" min="0" max="200" />
-            </div>
+            <div class="mb-3"><label class="form-label small">Text (empty = dimensions)</label><input type="text" class="form-control" id="imgText" placeholder="e.g. Product Image" maxlength="200" /></div>
+            <div class="mb-3"><label class="form-label small">Font Size (0 = auto)</label><input type="number" class="form-control" id="imgFontSize" value="0" min="0" max="200" /></div>
             <div class="mb-3">
               <label class="form-label small">Quick Presets</label>
               <div class="d-flex gap-2 flex-wrap">
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="applyPreset(800,800,'#f0f0f0','#999','Product Photo')">Product (800×800)</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="applyPreset(1200,630,'#1e2a3a','#ffffff','OG Image')">OG Image (1200×630)</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="applyPreset(728,90,'#0d6efd','#ffffff','Banner')">Banner (728×90)</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="applyPreset(150,150,'#eeeeee','#aaaaaa','')">Thumbnail (150×150)</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="applyPreset(800,800,'#f0f0f0','#999999','Product Photo')">Product</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="applyPreset(1200,630,'#1e2a3a','#ffffff','OG Image')">OG Image</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="applyPreset(728,90,'#0d6efd','#ffffff','Banner')">Banner</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="applyPreset(150,150,'#eeeeee','#aaaaaa','')">Thumb</button>
               </div>
             </div>
-            <button type="submit" class="btn btn-primary w-100">
-              <i class="bi bi-image"></i> Generate Image
-            </button>
+            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-image"></i> Generate Image</button>
           </form>
         </div>
       </div>
       <div class="col-lg-7">
-        <div class="card border-0 shadow-sm p-4">
-          <h6 class="fw-semibold mb-3"><i class="bi bi-eye"></i> Preview</h6>
-          <div id="imagePreview" class="text-center p-3 bg-light rounded" style="min-height:200px;display:flex;align-items:center;justify-content:center;">
-            <span class="text-muted">Click "Generate Image" to see a preview</span>
+        <div class="card p-4">
+          <h6 class="fw-semibold mb-3"><i class="bi bi-eye me-2" style="color:var(--accent)"></i>Preview</h6>
+          <div id="imagePreview" class="text-center p-4 rounded" style="min-height:200px;display:flex;align-items:center;justify-content:center;background:var(--badge-muted-bg);border:2px dashed var(--card-border);">
+            <span style="color:var(--text-secondary)">Click &ldquo;Generate Image&rdquo; to see a preview</span>
           </div>
-          <div id="imageActions" class="mt-3 d-flex gap-2 flex-wrap" style="display:none!important;">
-            <a id="imgDownloadSvg" class="btn btn-sm btn-outline-success" download="placeholder.svg">
-              <i class="bi bi-download"></i> Download SVG
-            </a>
-            <button class="btn btn-sm btn-outline-secondary" onclick="copyImageUrl()">
-              <i class="bi bi-clipboard"></i> Copy URL
-            </button>
+          <div id="imageActions" class="mt-3 d-flex gap-2 flex-wrap" style="display:none !important;">
+            <a id="imgDownloadSvg" class="btn btn-sm btn-outline-success" download="placeholder.svg"><i class="bi bi-download"></i> Download SVG</a>
+            <button class="btn btn-sm btn-outline-secondary" onclick="copyImageUrl()"><i class="bi bi-clipboard"></i> Copy URL</button>
           </div>
           <div id="imageUrlBox" class="mt-2" style="display:none;">
-            <label class="form-label small text-muted">Direct URL (for embedding):</label>
+            <label class="form-label small" style="color:var(--text-secondary)">Direct URL:</label>
             <input type="text" class="form-control form-control-sm font-monospace" id="imageDirectUrl" readonly />
           </div>
         </div>
@@ -289,60 +370,53 @@
     </div>
   </section>
 
-  <!-- ── Integration Section ──────────────────────────────────────────── -->
+  <!-- Integration -->
   <section id="sec-integration" class="section">
-    <h4 class="fw-bold mb-4">Store Integration</h4>
-
+    <h5 class="fw-bold mb-4">Store Integration</h5>
     <ul class="nav nav-tabs mb-4" id="integTab">
-      <li class="nav-item">
-        <a class="nav-link active" data-bs-toggle="tab" href="#tabWoo">
-          <i class="bi bi-bag-check"></i> WooCommerce
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#tabPS">
-          <i class="bi bi-cart3"></i> PrestaShop
-        </a>
-      </li>
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tabWoo"><i class="bi bi-bag-check"></i> WooCommerce</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabPS"><i class="bi bi-cart3"></i> PrestaShop</a></li>
     </ul>
-
     <div class="tab-content">
       <div class="tab-pane fade show active" id="tabWoo">
-        <div class="card border-0 shadow-sm p-4">
-          <h5 class="fw-semibold mb-3"><i class="bi bi-wordpress text-primary"></i> WooCommerce Plugin</h5>
-          <ol class="mb-3">
-            <li>Download the plugin file: <strong>cdn-optimizer.php</strong></li>
-            <li>In your WordPress Admin, go to <em>Plugins → Add New → Upload Plugin</em></li>
+        <div class="card p-4">
+          <h6 class="fw-semibold mb-3"><i class="bi bi-wordpress text-primary me-2"></i>WooCommerce Plugin</h6>
+          <ol class="mb-3" style="color:var(--text-secondary)">
+            <li>Download the plugin file: <strong style="color:var(--text-primary)">cdn-optimizer.php</strong></li>
+            <li>In WordPress Admin, go to <em>Plugins &rarr; Add New &rarr; Upload Plugin</em></li>
             <li>Upload and activate the plugin</li>
-            <li>Go to <em>Settings → CDN Optimizer</em></li>
-            <li>Enter your CDN URL: <code id="wooPluginCdnUrl">http://&lt;your-cdn-host&gt;:3000</code></li>
+            <li>Go to <em>Settings &rarr; CDN Optimizer</em></li>
+            <li>Enter your CDN URL: <code id="wooPluginCdnUrl">&mdash;</code></li>
             <li>Save &amp; test</li>
           </ol>
-          <a class="btn btn-outline-primary" href="/api/plugins/woocommerce" download="cdn-optimizer.php">
-            <i class="bi bi-download"></i> Download WooCommerce Plugin
-          </a>
+          <a class="btn btn-outline-primary" href="/api/plugins/woocommerce" download="cdn-optimizer.php"><i class="bi bi-download"></i> Download WooCommerce Plugin</a>
         </div>
       </div>
       <div class="tab-pane fade" id="tabPS">
-        <div class="card border-0 shadow-sm p-4">
-          <h5 class="fw-semibold mb-3"><i class="bi bi-boxes text-warning"></i> PrestaShop Module</h5>
-          <ol class="mb-3">
-            <li>Download the module ZIP: <strong>cdnoptimizer.zip</strong></li>
-            <li>In your PrestaShop Back Office, go to <em>Modules → Module Manager → Upload a module</em></li>
+        <div class="card p-4">
+          <h6 class="fw-semibold mb-3"><i class="bi bi-boxes text-warning me-2"></i>PrestaShop Module</h6>
+          <ol class="mb-3" style="color:var(--text-secondary)">
+            <li>Download the module ZIP: <strong style="color:var(--text-primary)">cdnoptimizer.zip</strong></li>
+            <li>In PrestaShop Back Office, go to <em>Modules &rarr; Module Manager &rarr; Upload a module</em></li>
             <li>Upload the ZIP and install</li>
             <li>Configure the CDN URL in the module settings</li>
             <li>Enable the module and flush PrestaShop cache</li>
           </ol>
-          <a class="btn btn-outline-warning" href="/api/plugins/prestashop" download="cdnoptimizer.zip">
-            <i class="bi bi-download"></i> Download PrestaShop Module
-          </a>
+          <a class="btn btn-outline-warning" href="/api/plugins/prestashop" download="cdnoptimizer.zip"><i class="bi bi-download"></i> Download PrestaShop Module</a>
         </div>
       </div>
     </div>
   </section>
-</div><!-- /#main -->
 
-<!-- ── Origin Modal ──────────────────────────────────────────────────────── -->
+  <!-- Settings -->
+  <section id="sec-settings" class="section">
+    <h5 class="fw-bold mb-4">System Information</h5>
+    <div id="settingsContent"><div class="section-loading"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div></div>
+  </section>
+
+</div>
+
+<!-- Origin Modal -->
 <div class="modal fade" id="originModal" tabindex="-1">
   <div class="modal-dialog">
     <form id="originForm" class="modal-content" onsubmit="saveOrigin(event)">
@@ -359,7 +433,7 @@
         <div class="mb-3">
           <label class="form-label">Origin URL <span class="text-danger">*</span></label>
           <input type="url" class="form-control" id="oUrl" placeholder="https://mystore.com" required />
-          <small class="text-muted">The actual store URL that CDN will proxy to.</small>
+          <small style="color:var(--text-secondary)">The actual store URL that CDN will proxy to.</small>
         </div>
         <div class="mb-3">
           <label class="form-label">Platform Type</label>
@@ -370,147 +444,175 @@
           </select>
         </div>
         <div class="mb-3">
-          <label class="form-label">CDN Hostname <small class="text-muted">(optional)</small></label>
+          <label class="form-label">CDN Hostname <small style="color:var(--text-secondary)">(optional)</small></label>
           <input type="text" class="form-control" id="oCdnHost" placeholder="cdn.mystore.com" />
-          <small class="text-muted">If clients reach this CDN via a specific hostname, enter it here.</small>
+          <small style="color:var(--text-secondary)">If clients reach this CDN via a specific hostname.</small>
         </div>
         <div class="mb-3">
-          <label class="form-label">Cache TTL (seconds) <small class="text-muted">(optional)</small></label>
+          <label class="form-label">Cache TTL (seconds) <small style="color:var(--text-secondary)">(optional)</small></label>
           <input type="number" class="form-control" id="oCacheTtl" placeholder="3600" min="60" />
         </div>
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="oActive" checked />
+        <div class="form-check form-switch">
+          <input type="checkbox" class="form-check-input" id="oActive" checked aria-describedby="oActiveHelp" />
           <label class="form-check-label" for="oActive">Active</label>
+          <small id="oActiveHelp" class="d-block" style="color:var(--text-secondary)">Inactive origins will not serve traffic.</small>
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save Origin</button>
+        <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Save Origin</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- Toast container -->
+<!-- Toast Container -->
 <div id="toastContainer"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 <script>
-// ── Navigation ──────────────────────────────────────────────────────────────
-document.querySelectorAll('[data-section]').forEach(link => {
-  link.addEventListener('click', e => {
-    e.preventDefault();
-    const sec = link.dataset.section;
-    document.querySelectorAll('[data-section]').forEach(l => l.classList.remove('active'));
-    link.classList.add('active');
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById('sec-' + sec).classList.add('active');
-    if (sec === 'dashboard') { loadStatus(); loadLogs(); }
-    if (sec === 'origins') loadOrigins();
-    if (sec === 'cache') { loadKeys(); }
-  });
-});
-
-// ── Toasts ──────────────────────────────────────────────────────────────────
-function toast(msg, type = 'success') {
-  const el = document.createElement('div');
-  el.className = `toast align-items-center text-white bg-${type} border-0 show mb-2`;
-  el.innerHTML = `<div class="d-flex"><div class="toast-body">${msg}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>`;
-  document.getElementById('toastContainer').appendChild(el);
-  setTimeout(() => el.remove(), 3500);
+function escHtml(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// ── API helpers ─────────────────────────────────────────────────────────────
-async function api(path, opts = {}) {
-  const res = await fetch('/api' + path, {
-    headers: { 'Content-Type': 'application/json' },
-    ...opts,
-  });
+async function api(path, opts) {
+  opts = opts || {};
+  var res = await fetch('/api' + path, Object.assign({ headers: { 'Content-Type': 'application/json' } }, opts));
   return res.json();
 }
 
-// ── Dashboard ───────────────────────────────────────────────────────────────
+function toast(msg, type) {
+  type = type || 'success';
+  var el = document.createElement('div');
+  el.className = 'toast align-items-center text-white bg-' + type + ' border-0 show mb-2';
+  el.setAttribute('role', 'alert');
+  el.innerHTML = '<div class="d-flex"><div class="toast-body">' + msg + '</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>';
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(function() { el.remove(); }, 3500);
+}
+
+/* Theme */
+var themeToggle = document.getElementById('themeToggle');
+function setTheme(mode) {
+  document.documentElement.setAttribute('data-bs-theme', mode);
+  themeToggle.innerHTML = mode === 'dark' ? '<i class="bi bi-sun"></i>' : '<i class="bi bi-moon-stars"></i>';
+  localStorage.setItem('cdn-admin-theme', mode);
+}
+themeToggle.addEventListener('click', function() {
+  setTheme(document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark');
+});
+(function() { var s = localStorage.getItem('cdn-admin-theme'); if (s) setTheme(s); })();
+
+/* Sidebar mobile */
+var sidebar = document.getElementById('sidebar');
+var overlay = document.getElementById('sidebarOverlay');
+document.getElementById('hamburgerBtn').addEventListener('click', function() {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('show');
+});
+overlay.addEventListener('click', function() {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('show');
+});
+
+/* Navigation */
+var sectionIcons = { dashboard:'bi-grid-1x2', origins:'bi-hdd-network', cache:'bi-database', images:'bi-image', integration:'bi-plug', settings:'bi-gear' };
+var sectionTitles = { dashboard:'Dashboard', origins:'Origins', cache:'Cache', images:'Images', integration:'Integration', settings:'Settings' };
+document.querySelectorAll('[data-section]').forEach(function(link) {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    var sec = link.dataset.section;
+    document.querySelectorAll('[data-section]').forEach(function(l) { l.classList.remove('active'); });
+    link.classList.add('active');
+    document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById('sec-' + sec).classList.add('active');
+    document.getElementById('breadcrumb').innerHTML = '<i class="bi ' + (sectionIcons[sec] || 'bi-grid-1x2') + '"></i> ' + (sectionTitles[sec] || sec);
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+    if (sec === 'dashboard') { loadStatus(); loadLogs(); }
+    if (sec === 'origins') loadOrigins();
+    if (sec === 'cache') loadKeys();
+    if (sec === 'settings') loadSystem();
+  });
+});
+
+/* Dashboard */
 async function loadStatus() {
-  const data = await api('/status');
-  document.getElementById('statHits').textContent = data.cache?.hits ?? '—';
-  document.getElementById('statHitRate').textContent = data.cache?.hitRate ?? '—';
-  document.getElementById('statMisses').textContent = data.cache?.misses ?? '—';
-  document.getElementById('statSize').textContent = data.cache?.size ?? '—';
-  document.getElementById('statUptime').textContent = data.uptimeHuman ?? '—';
-  document.getElementById('statMem').textContent = data.memoryMB ?? '—';
+  try {
+    var d = await api('/status');
+    document.getElementById('statHits').textContent = d.cache ? d.cache.hits : '\u2014';
+    document.getElementById('statHitRate').textContent = d.cache ? d.cache.hitRate : '\u2014';
+    document.getElementById('statMisses').textContent = d.cache ? d.cache.misses : '\u2014';
+    document.getElementById('statErrors').textContent = d.cache ? d.cache.errors : '0';
+    document.getElementById('statSize').textContent = d.cache ? d.cache.size : '\u2014';
+    document.getElementById('statMaxItems').textContent = d.cache ? d.cache.maxItems : '\u2014';
+    document.getElementById('statUptime').textContent = d.uptimeHuman || '\u2014';
+    document.getElementById('statMem').textContent = d.memoryMB || '\u2014';
+  } catch (e) { console.error('Status error:', e); }
 }
 
 async function loadLogs() {
-  const data = await api('/logs?limit=30');
-  const tbody = document.getElementById('logsBody');
-  if (!data.logs || data.logs.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No requests yet…</td></tr>';
-    return;
-  }
-  tbody.innerHTML = data.logs.map(l => {
-    const time = new Date(l.timestamp).toLocaleTimeString();
-    const statusClass = l.status >= 500 ? 'text-danger' : l.status >= 400 ? 'text-warning' : 'text-success';
-    const cacheBadge = l.cacheStatus?.includes('HIT')
-      ? '<span class="badge badge-hit">HIT</span>'
-      : l.cacheStatus?.includes('STORED')
-        ? '<span class="badge badge-stored">STORED</span>'
-        : '<span class="badge badge-miss">MISS</span>';
-    const url = (l.url || '').length > 60 ? (l.url || '').slice(0, 57) + '…' : (l.url || '');
-    return `<tr>
-      <td class="text-muted small">${time}</td>
-      <td><span class="badge bg-secondary">${l.method}</span></td>
-      <td><small class="font-monospace" title="${l.url || ''}">${url}</small></td>
-      <td class="${statusClass} fw-semibold">${l.status ?? '—'}</td>
-      <td>${cacheBadge}</td>
-      <td class="small">${l.duration != null ? l.duration + 'ms' : '—'}</td>
-      <td class="small text-muted">${l.origin || '—'}</td>
-    </tr>`;
-  }).join('');
+  try {
+    var d = await api('/logs?limit=30');
+    var tb = document.getElementById('logsBody');
+    if (!d.logs || !d.logs.length) {
+      tb.innerHTML = '<tr><td colspan="7" class="text-center py-4" style="color:var(--text-secondary)">No requests yet\u2026</td></tr>';
+      return;
+    }
+    tb.innerHTML = d.logs.map(function(l) {
+      var t = new Date(l.timestamp).toLocaleTimeString();
+      var sc = l.status >= 500 ? 'text-danger' : l.status >= 400 ? 'text-warning' : 'text-success';
+      var cb = (l.cacheStatus && l.cacheStatus.indexOf('HIT') !== -1) ? '<span class="badge bg-success">HIT</span>' :
+               (l.cacheStatus && l.cacheStatus.indexOf('STORED') !== -1) ? '<span class="badge bg-primary">STORED</span>' :
+               '<span class="badge bg-secondary">MISS</span>';
+      var u = (l.url || '').length > 55 ? escHtml((l.url || '').slice(0, 52)) + '\u2026' : escHtml(l.url || '');
+      return '<tr><td class="small" style="color:var(--text-secondary)">' + t + '</td>' +
+        '<td><span class="badge bg-dark">' + escHtml(l.method) + '</span></td>' +
+        '<td><small class="font-monospace" title="' + escHtml(l.url || '') + '">' + u + '</small></td>' +
+        '<td class="' + sc + ' fw-semibold">' + (l.status || '\u2014') + '</td>' +
+        '<td>' + cb + '</td>' +
+        '<td class="small">' + (l.duration != null ? l.duration + 'ms' : '\u2014') + '</td>' +
+        '<td class="small" style="color:var(--text-secondary)">' + escHtml(l.origin || '\u2014') + '</td></tr>';
+    }).join('');
+  } catch (e) { console.error('Logs error:', e); }
 }
 
-// ── Origins ─────────────────────────────────────────────────────────────────
+/* Origins */
 async function loadOrigins() {
-  const origins = await api('/origins');
-  const container = document.getElementById('originsList');
-  if (!origins.length) {
-    container.innerHTML = '<div class="text-center text-muted py-5"><i class="bi bi-hdd-network fs-1"></i><br>No origins configured yet. Add one to get started.</div>';
-    return;
-  }
-  container.innerHTML = origins.map(o => `
-    <div class="card border-0 shadow-sm mb-3">
-      <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
-        <div>
-          <div class="d-flex align-items-center gap-2 mb-1">
-            <span class="fw-semibold fs-5">${escHtml(o.name)}</span>
-            <span class="badge ${o.active ? 'bg-success' : 'bg-secondary'}">${o.active ? 'Active' : 'Inactive'}</span>
-            <span class="origin-type badge ${typeColor(o.type)}">${o.type}</span>
-          </div>
-          <div class="text-muted small font-monospace">${escHtml(o.originUrl)}</div>
-          ${o.cdnHostname ? `<div class="small text-primary">CDN: ${escHtml(o.cdnHostname)}</div>` : ''}
-          <div class="small text-muted mt-1">ID: <code>${o.id}</code> &bull; TTL: ${o.cacheTtl || 'default'} s</div>
-        </div>
-        <div class="d-flex gap-2 flex-wrap">
-          <button class="btn btn-sm btn-outline-info" onclick="testOrigin('${o.id}', this)">
-            <i class="bi bi-wifi"></i> Test
-          </button>
-          <button class="btn btn-sm btn-outline-secondary" onclick="openEditOriginModal(${JSON.stringify(o).replace(/"/g,'&quot;')})">
-            <i class="bi bi-pencil"></i> Edit
-          </button>
-          <button class="btn btn-sm btn-outline-danger" onclick="deleteOrigin('${o.id}', '${escHtml(o.name)}')">
-            <i class="bi bi-trash"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function typeColor(t) {
-  return t === 'woocommerce' ? 'bg-primary' : t === 'prestashop' ? 'bg-warning text-dark' : 'bg-secondary';
-}
-
-function escHtml(s) {
-  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  var c = document.getElementById('originsList');
+  try {
+    var origins = await api('/origins');
+    if (!origins.length) {
+      c.innerHTML = '<div class="text-center py-5" style="color:var(--text-secondary)"><i class="bi bi-hdd-network" style="font-size:2.5rem"></i><p class="mt-2">No origins configured. Add one to get started.</p></div>';
+      return;
+    }
+    c.innerHTML = origins.map(function(o) {
+      var tc = o.type === 'woocommerce' ? 'woocommerce' : o.type === 'prestashop' ? 'prestashop' : 'generic';
+      var safeJson = escHtml(JSON.stringify(o));
+      var safeId = escHtml(o.id);
+      var safeName = escHtml(o.name);
+      return '<div class="card origin-card mb-3"><div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">' +
+        '<div class="d-flex gap-3 align-items-start"><div class="status-dot mt-2 ' + (o.active ? 'active' : 'inactive') + '"></div><div>' +
+        '<div class="d-flex align-items-center gap-2 mb-1 flex-wrap"><span class="fw-semibold" style="font-size:1.05rem">' + safeName + '</span><span class="type-badge ' + tc + '">' + escHtml(o.type) + '</span></div>' +
+        '<div class="font-monospace small" style="color:var(--text-secondary)">' + escHtml(o.originUrl) + '</div>' +
+        (o.cdnHostname ? '<div class="small" style="color:var(--accent)">CDN: ' + escHtml(o.cdnHostname) + '</div>' : '') +
+        '<div class="small mt-1" style="color:var(--text-secondary)">ID: <code>' + safeId + '</code> \u2022 TTL: ' + (o.cacheTtl || 'default') + 's</div>' +
+        '</div></div>' +
+        '<div class="d-flex gap-2 flex-wrap align-items-start">' +
+        '<button class="btn btn-sm btn-outline-info" data-action="test" data-id="' + safeId + '"><i class="bi bi-wifi"></i> Test</button>' +
+        '<button class="btn btn-sm btn-outline-secondary" data-action="edit" data-o="' + safeJson + '"><i class="bi bi-pencil"></i> Edit</button>' +
+        '<button class="btn btn-sm btn-outline-danger" data-action="delete" data-id="' + safeId + '" data-name="' + safeName + '"><i class="bi bi-trash"></i></button>' +
+        '</div></div></div>';
+    }).join('');
+    c.querySelectorAll('[data-action]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var action = btn.getAttribute('data-action');
+        if (action === 'test') testOrigin(btn.getAttribute('data-id'), btn);
+        else if (action === 'edit') openEditOriginModal(JSON.parse(btn.getAttribute('data-o')));
+        else if (action === 'delete') deleteOrigin(btn.getAttribute('data-id'), btn.getAttribute('data-name'));
+      });
+    });
+  } catch (e) { c.innerHTML = '<div class="text-center text-danger py-4">Failed to load origins.</div>'; }
 }
 
 function openAddOriginModal() {
@@ -538,96 +640,118 @@ function openEditOriginModal(o) {
 
 async function saveOrigin(e) {
   e.preventDefault();
-  const id = document.getElementById('editOriginId').value;
-  const body = {
+  var id = document.getElementById('editOriginId').value;
+  var body = {
     name: document.getElementById('oName').value,
     originUrl: document.getElementById('oUrl').value,
     type: document.getElementById('oType').value,
     cdnHostname: document.getElementById('oCdnHost').value,
     cacheTtl: document.getElementById('oCacheTtl').value || null,
-    active: document.getElementById('oActive').checked,
+    active: document.getElementById('oActive').checked
   };
-  const res = id
-    ? await api('/origins/' + id, { method: 'PUT', body: JSON.stringify(body) })
-    : await api('/origins', { method: 'POST', body: JSON.stringify(body) });
-
-  if (res.error) { toast(res.error, 'danger'); return; }
-  bootstrap.Modal.getInstance(document.getElementById('originModal')).hide();
-  toast(id ? 'Origin updated!' : 'Origin added!');
-  loadOrigins();
+  try {
+    var res = id ? await api('/origins/' + id, { method: 'PUT', body: JSON.stringify(body) })
+                 : await api('/origins', { method: 'POST', body: JSON.stringify(body) });
+    if (res.error) { toast(res.error, 'danger'); return; }
+    bootstrap.Modal.getInstance(document.getElementById('originModal')).hide();
+    toast(id ? 'Origin updated!' : 'Origin added!');
+    loadOrigins();
+  } catch (err) { toast('Failed to save origin.', 'danger'); }
 }
 
 async function deleteOrigin(id, name) {
-  if (!confirm(`Delete origin "${name}"?`)) return;
-  const res = await api('/origins/' + id, { method: 'DELETE' });
-  if (res.error) { toast(res.error, 'danger'); return; }
-  toast('Origin deleted.');
-  loadOrigins();
+  if (!confirm('Delete origin "' + name + '"?')) return;
+  try {
+    var res = await api('/origins/' + id, { method: 'DELETE' });
+    if (res.error) { toast(res.error, 'danger'); return; }
+    toast('Origin deleted.');
+    loadOrigins();
+  } catch (err) { toast('Failed to delete.', 'danger'); }
 }
 
 async function testOrigin(id, btn) {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-  const res = await api('/origins/' + id + '/test', { method: 'POST' });
-  btn.disabled = false;
-  if (res.reachable) {
-    btn.innerHTML = `<i class="bi bi-check-lg text-success"></i> ${res.latencyMs}ms`;
-    toast(`Origin reachable! Status ${res.statusCode}, ${res.latencyMs}ms`);
-  } else {
-    btn.innerHTML = `<i class="bi bi-x-lg text-danger"></i> Error`;
-    toast(`Origin unreachable: ${res.error}`, 'danger');
+  try {
+    var res = await api('/origins/' + id + '/test', { method: 'POST' });
+    btn.disabled = false;
+    if (res.reachable) {
+      btn.innerHTML = '<i class="bi bi-check-lg text-success"></i> ' + res.latencyMs + 'ms';
+      toast('Origin reachable! Status ' + res.statusCode + ', ' + res.latencyMs + 'ms');
+    } else {
+      btn.innerHTML = '<i class="bi bi-x-lg text-danger"></i> Error';
+      toast('Origin unreachable: ' + (res.error || 'Unknown'), 'danger');
+    }
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-x-lg text-danger"></i> Error';
+    toast('Test failed.', 'danger');
   }
-  setTimeout(() => { btn.innerHTML = '<i class="bi bi-wifi"></i> Test'; }, 4000);
+  setTimeout(function() { btn.innerHTML = '<i class="bi bi-wifi"></i> Test'; }, 4000);
 }
 
-// ── Cache ───────────────────────────────────────────────────────────────────
+function exportOrigins() { window.location.href = '/api/origins/export'; }
+
+function importOrigins(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = async function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      var payload = Array.isArray(data) ? { origins: data } : data;
+      var res = await api('/origins/import', { method: 'POST', body: JSON.stringify(payload) });
+      if (res.error) { toast(res.error, 'danger'); } else { toast('Origins imported!'); loadOrigins(); }
+    } catch (err) { toast('Invalid JSON file.', 'danger'); }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
+/* Cache */
 async function loadKeys() {
-  const prefix = document.getElementById('keySearch')?.value || '';
-  const data = await api('/cache/keys?prefix=' + encodeURIComponent(prefix) + '&limit=200');
-  const tbody = document.getElementById('keysBody');
-  if (!data.keys || data.keys.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="2" class="text-center text-muted py-4">Cache is empty.</td></tr>';
-    return;
-  }
-  tbody.innerHTML = data.keys.map(k => `
-    <tr>
-      <td class="font-monospace small">${escHtml(k)}</td>
-      <td class="text-end">
-        <button class="btn btn-xs btn-outline-danger btn-sm py-0 px-1" onclick="purgeKey('${escHtml(k)}')">
-          <i class="bi bi-trash"></i>
-        </button>
-      </td>
-    </tr>
-  `).join('');
-  if (data.total > 200) {
-    tbody.innerHTML += `<tr><td colspan="2" class="text-muted small text-center">… and ${data.total - 200} more entries</td></tr>`;
-  }
+  var prefix = document.getElementById('keySearch') ? document.getElementById('keySearch').value : '';
+  try {
+    var d = await api('/cache/keys?prefix=' + encodeURIComponent(prefix || '') + '&limit=200');
+    var tb = document.getElementById('keysBody');
+    if (!d.keys || !d.keys.length) {
+      tb.innerHTML = '<tr><td colspan="2" class="text-center py-4" style="color:var(--text-secondary)">Cache is empty.</td></tr>';
+      return;
+    }
+    tb.innerHTML = d.keys.map(function(k) {
+      return '<tr><td class="font-monospace small">' + escHtml(k) + '</td><td class="text-end"><button class="btn btn-sm btn-outline-danger py-0 px-1" data-purge-key="' + escHtml(k) + '"><i class="bi bi-trash"></i></button></td></tr>';
+    }).join('');
+    tb.querySelectorAll('[data-purge-key]').forEach(function(btn) {
+      btn.addEventListener('click', function() { purgeKey(btn.getAttribute('data-purge-key')); });
+    });
+    if (d.total > 200) tb.innerHTML += '<tr><td colspan="2" class="text-center small" style="color:var(--text-secondary)">\u2026 and ' + (d.total - 200) + ' more entries</td></tr>';
+  } catch (e) { console.error('Keys error:', e); }
 }
 
 async function purgeKey(key) {
-  const res = await api('/cache/purge', { method: 'POST', body: JSON.stringify({ key }) });
-  toast(res.purged ? `Purged: ${key}` : 'Key not found.');
+  var res = await api('/cache/purge', { method: 'POST', body: JSON.stringify({ key: key }) });
+  toast(res.purged ? 'Purged: ' + key : 'Key not found.');
   loadKeys();
 }
 
 async function purgeCache() {
-  const val = document.getElementById('purgeInput').value.trim();
+  var val = document.getElementById('purgeInput').value.trim();
   if (!val) { toast('Enter a key or prefix.', 'warning'); return; }
-  const isPrefix = val.endsWith('::') || !val.includes('::');
-  const body = isPrefix ? { prefix: val } : { key: val };
-  const res = await api('/cache/purge', { method: 'POST', body: JSON.stringify(body) });
-  toast(`Purged ${res.purged} entr${res.purged === 1 ? 'y' : 'ies'}.`);
+  var isPrefix = val.endsWith('::') || val.indexOf('::') === -1;
+  var body = isPrefix ? { prefix: val } : { key: val };
+  var res = await api('/cache/purge', { method: 'POST', body: JSON.stringify(body) });
+  toast('Purged ' + (res.purged || 0) + ' entr' + (res.purged === 1 ? 'y' : 'ies') + '.');
   loadKeys();
 }
 
 async function flushCache() {
-  if (!confirm('Flush all cached entries?')) return;
-  const res = await api('/cache/flush', { method: 'POST' });
-  toast(res.message);
+  if (!confirm('Flush all cached entries? This cannot be undone.')) return;
+  var res = await api('/cache/flush', { method: 'POST' });
+  toast(res.message || 'Cache flushed.');
   loadKeys();
 }
 
-// ── Images ──────────────────────────────────────────────────────────────────
+/* Images */
 function applyPreset(w, h, bg, tc, text) {
   document.getElementById('imgWidth').value = w;
   document.getElementById('imgHeight').value = h;
@@ -639,58 +763,63 @@ function applyPreset(w, h, bg, tc, text) {
   document.getElementById('imgFontSize').value = 0;
 }
 
-async function generateImage(e) {
+function generateImage(e) {
   if (e) e.preventDefault();
-  const params = {
-    width: document.getElementById('imgWidth').value,
-    height: document.getElementById('imgHeight').value,
-    bgColor: document.getElementById('imgBgColor').value,
-    textColor: document.getElementById('imgTextColor').value,
-    text: document.getElementById('imgText').value,
-    fontSize: document.getElementById('imgFontSize').value,
-  };
-
-  // Build preview URL
-  const qs = new URLSearchParams(params).toString();
-  const previewUrl = '/api/images/preview?' + qs;
-
-  // Show preview
-  const preview = document.getElementById('imagePreview');
-  preview.textContent = '';
-  const img = document.createElement('img');
-  img.src = previewUrl;
-  img.style.cssText = 'max-width:100%;height:auto;border:1px solid #dee2e6;border-radius:8px;';
-  img.alt = 'Generated Image';
-  preview.appendChild(img);
-
-  // Show actions
+  var p = { width: document.getElementById('imgWidth').value, height: document.getElementById('imgHeight').value, bgColor: document.getElementById('imgBgColor').value, textColor: document.getElementById('imgTextColor').value, text: document.getElementById('imgText').value, fontSize: document.getElementById('imgFontSize').value };
+  var url = '/api/images/preview?' + new URLSearchParams(p).toString();
+  var pv = document.getElementById('imagePreview');
+  pv.style.border = 'none';
+  pv.innerHTML = '<img src="' + url + '" alt="Generated Image" style="max-width:100%;height:auto;border-radius:8px;border:1px solid var(--card-border);" />';
   document.getElementById('imageActions').style.cssText = '';
-
-  // Set download link
-  const dlLink = document.getElementById('imgDownloadSvg');
-  dlLink.href = previewUrl;
-  dlLink.download = `placeholder-${params.width}x${params.height}.svg`;
-
-  // Show direct URL
-  const urlBox = document.getElementById('imageUrlBox');
-  urlBox.style.display = '';
-  const fullUrl = window.location.origin + previewUrl;
-  document.getElementById('imageDirectUrl').value = fullUrl;
-
+  document.getElementById('imgDownloadSvg').href = url;
+  document.getElementById('imgDownloadSvg').download = 'placeholder-' + p.width + 'x' + p.height + '.svg';
+  document.getElementById('imageUrlBox').style.display = '';
+  document.getElementById('imageDirectUrl').value = window.location.origin + url;
   toast('Image generated!');
 }
 
 function copyImageUrl() {
-  const url = document.getElementById('imageDirectUrl').value;
-  navigator.clipboard.writeText(url).then(() => toast('URL copied to clipboard!'));
+  navigator.clipboard.writeText(document.getElementById('imageDirectUrl').value).then(function() { toast('URL copied!'); });
 }
 
-// ── Init ────────────────────────────────────────────────────────────────────
+/* Settings */
+async function loadSystem() {
+  var c = document.getElementById('settingsContent');
+  try {
+    var d = await api('/system');
+    var memPct = d.totalMemoryMB > 0 ? Math.round(((d.totalMemoryMB - d.freeMemoryMB) / d.totalMemoryMB) * 100) : 0;
+    var heapPct = d.heapTotalMB > 0 ? Math.round((d.heapUsedMB / d.heapTotalMB) * 100) : 0;
+    var memClr = memPct > 80 ? '#ef4444' : memPct > 60 ? '#f59e0b' : '#22c55e';
+    var heapClr = heapPct > 80 ? '#ef4444' : heapPct > 60 ? '#f59e0b' : '#3b82f6';
+    var la = d.loadAvg || [];
+    c.innerHTML = '<div class="settings-grid">' +
+      '<div class="card p-4"><h6 class="fw-semibold mb-3"><i class="bi bi-server me-2" style="color:var(--accent)"></i>Server Info</h6>' +
+      ir('Node.js', d.node) + ir('Platform', d.platform + ' / ' + d.arch) + ir('Hostname', d.hostname) + ir('CPUs', d.cpus) + ir('Uptime', d.uptimeHuman || d.uptime) + ir('Load Avg', la.length ? la.map(function(v){return v.toFixed(2);}).join(', ') : '\u2014') +
+      '</div>' +
+      '<div class="card p-4"><h6 class="fw-semibold mb-3"><i class="bi bi-sliders me-2" style="color:var(--accent)"></i>Configuration</h6>' +
+      (d.config ? ir('CDN Port', d.config.cdnPort) + ir('Admin Port', d.config.adminPort) + ir('Cache TTL', (d.config.cacheTtl || '\u2014') + 's') + ir('Max Items', d.config.cacheMaxItems) + ir('Proxy Timeout', (d.config.proxyTimeout || '\u2014') + 'ms') + ir('Log Level', d.config.logLevel) : '<p style="color:var(--text-secondary)">No config data.</p>') +
+      '</div>' +
+      '<div class="card p-4"><h6 class="fw-semibold mb-3"><i class="bi bi-memory me-2" style="color:var(--accent)"></i>Memory Usage</h6>' +
+      '<div class="mb-3"><div class="d-flex justify-content-between small mb-1"><span style="color:var(--text-secondary)">System Memory</span><span class="fw-semibold">' + Math.round(d.totalMemoryMB - d.freeMemoryMB) + ' / ' + Math.round(d.totalMemoryMB) + ' MB (' + memPct + '%)</span></div><div class="mem-bar"><div class="mem-bar-fill" style="width:' + memPct + '%;background:' + memClr + '"></div></div></div>' +
+      '<div class="mb-3"><div class="d-flex justify-content-between small mb-1"><span style="color:var(--text-secondary)">Heap Used</span><span class="fw-semibold">' + Math.round(d.heapUsedMB) + ' / ' + Math.round(d.heapTotalMB) + ' MB (' + heapPct + '%)</span></div><div class="mem-bar"><div class="mem-bar-fill" style="width:' + heapPct + '%;background:' + heapClr + '"></div></div></div>' +
+      ir('Process Memory', Math.round(d.processMemoryMB || 0) + ' MB') + ir('Free Memory', Math.round(d.freeMemoryMB || 0) + ' MB') +
+      '</div></div>';
+  } catch (e) { c.innerHTML = '<div class="text-center text-danger py-4">Failed to load system info.</div>'; }
+}
+
+function ir(label, value) {
+  return '<div class="info-row"><span class="info-label">' + escHtml(label) + '</span><span class="info-value">' + escHtml(value) + '</span></div>';
+}
+
+/* Integration CDN URL */
+(function() { var el = document.getElementById('wooPluginCdnUrl'); if (el) el.textContent = window.location.origin; })();
+
+/* Init */
 loadStatus();
 loadLogs();
-setInterval(() => {
-  const dash = document.getElementById('sec-dashboard');
-  if (dash.classList.contains('active')) { loadStatus(); loadLogs(); }
+setInterval(function() {
+  var d = document.getElementById('sec-dashboard');
+  if (d && d.classList.contains('active')) { loadStatus(); loadLogs(); }
 }, 10000);
 </script>
 </body>

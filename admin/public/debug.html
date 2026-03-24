@@ -8,59 +8,69 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" integrity="sha384-tViUnnbYAV00ruLTd/hcZKbKMNFQMasXqTCKb/EJRC0x4c5aZHBYRXflUEQBikgm" crossorigin="anonymous" />
   <style>
-    body { background: #0f1117; color: #e2e8f0; font-family: 'Consolas', 'Monaco', monospace; }
-    .top-bar {
-      background: #1e2a3a; padding: 12px 24px;
-      display: flex; align-items: center; gap: 16px;
-      border-bottom: 1px solid #2d3f52;
-    }
-    .top-bar .brand { color: #fff; font-weight:700; font-size:1.1rem; }
-    .top-bar .brand span { color: #f59e0b; }
-    .badge-hit  { background:#16a34a; }
-    .badge-miss { background:#475569; }
-    .badge-stored { background:#2563eb; }
-    .badge-no-origin { background:#dc2626; }
-    .log-row { font-size:.82rem; border-bottom: 1px solid #1e2a3a; }
-    .log-row:hover { background: #1e2a3a; }
-    .status-2xx { color: #4ade80; }
-    .status-3xx { color: #60a5fa; }
-    .status-4xx { color: #fbbf24; }
-    .status-5xx { color: #f87171; }
-    .panel { background: #1a1f2e; border: 1px solid #2d3f52; border-radius: 8px; margin-bottom:16px; }
-    .panel-header {
-      padding: 10px 16px; border-bottom: 1px solid #2d3f52;
-      font-size:.85rem; font-weight:600; color:#9ab0c8; text-transform:uppercase; letter-spacing:.5px;
-    }
-    .panel-body { padding: 16px; }
-    .kv { display: grid; grid-template-columns: 160px 1fr; gap: 6px 16px; font-size:.85rem; }
-    .kv .k { color: #64748b; }
-    .kv .v { color: #e2e8f0; font-weight: 500; }
-    .stat-pill {
-      display:inline-flex; align-items:center; gap:6px;
-      background:#1e2a3a; border:1px solid #2d3f52; border-radius:20px;
-      padding: 4px 14px; font-size:.82rem;
-    }
-    .stat-pill .num { font-size:1.1rem; font-weight:700; }
-    #logTable tbody tr { cursor:pointer; }
+    :root { --bg:#0f172a; --card:#1e293b; --topbar:#111827; --bdr:#334155; --t1:#f1f5f9; --t2:#94a3b8; --tm:#64748b; --accent:#3b82f6; --acl:#60a5fa; --green:#22c55e; --red:#ef4444; --yellow:#eab308; --cyan:#06b6d4; --radius:12px; --tr:0.2s ease; }
+    body { background:var(--bg); color:var(--t1); font-family:'Segoe UI',system-ui,-apple-system,sans-serif; }
+    .top-bar { background:var(--topbar); padding:0 24px; height:56px; display:flex; align-items:center; gap:16px; border-bottom:1px solid var(--bdr); }
+    .top-bar .brand { display:flex; align-items:center; gap:10px; color:#fff; font-weight:700; font-size:1.05rem; text-decoration:none; }
+    .brand-icon { width:32px; height:32px; background:var(--accent); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1rem; color:#fff; }
+    .brand-label span { color:var(--acl); font-weight:400; }
+    a.back-link { color:var(--t2); text-decoration:none; font-size:.85rem; transition:color var(--tr); }
+    a.back-link:hover { color:var(--acl); }
+    .auto-badge { font-size:.72rem; padding:4px 10px; border-radius:6px; cursor:pointer; transition:opacity var(--tr); }
+    .auto-badge:hover { opacity:.85; }
+    .stat-card { position:relative; background:var(--card); border:1px solid var(--bdr); border-radius:var(--radius); padding:14px 18px; min-width:130px; overflow:hidden; transition:box-shadow var(--tr),border-color var(--tr); }
+    .stat-card:hover { border-color:var(--tm); box-shadow:0 4px 12px rgba(0,0,0,.2); }
+    .stat-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; border-radius:4px 0 0 4px; }
+    .stat-card.a-green::before { background:var(--green); }  .stat-card.a-gray::before { background:#6b7280; }
+    .stat-card.a-blue::before  { background:var(--accent); } .stat-card.a-yellow::before { background:var(--yellow); }
+    .stat-card.a-cyan::before  { background:var(--cyan); }   .stat-card.a-white::before { background:#e2e8f0; }
+    .stat-label { font-size:.72rem; text-transform:uppercase; letter-spacing:.5px; color:var(--tm); font-weight:600; margin-bottom:4px; }
+    .stat-value { font-size:1.25rem; font-weight:700; font-family:'SFMono-Regular','Consolas',monospace; }
+    .a-green .stat-value{color:var(--green)} .a-gray .stat-value{color:#9ca3af} .a-blue .stat-value{color:var(--acl)}
+    .a-yellow .stat-value{color:var(--yellow)} .a-cyan .stat-value{color:var(--cyan)} .a-white .stat-value{color:#e2e8f0}
+    .panel { background:var(--card); border:1px solid var(--bdr); border-radius:var(--radius); margin-bottom:16px; }
+    .panel-header { padding:12px 20px; border-bottom:1px solid var(--bdr); font-size:.8rem; font-weight:600; color:var(--t2); text-transform:uppercase; letter-spacing:.5px; }
+    .panel-header i { color:var(--acl); margin-right:6px; }
+    .panel-body { padding:20px; }
+    .panel-footer { padding:10px 20px; border-top:1px solid var(--bdr); font-size:.78rem; color:var(--tm); }
+    .kv { display:grid; grid-template-columns:140px 1fr; gap:8px 16px; font-size:.85rem; }
+    .kv .k { color:var(--tm); font-weight:500; }
+    .kv .v { color:var(--t1); font-weight:600; font-family:'SFMono-Regular','Consolas',monospace; }
+    .log-wrap { max-height:520px; overflow-y:auto; }
+    #logTable { margin-bottom:0; }
+    #logTable thead th { background:var(--card); border-bottom:2px solid var(--bdr); font-weight:600; font-size:.73rem; text-transform:uppercase; letter-spacing:.5px; color:var(--tm); padding:10px 14px; position:sticky; top:0; z-index:1; }
+    #logTable tbody tr { cursor:pointer; transition:background var(--tr); border-bottom:1px solid rgba(51,65,85,.5); }
+    #logTable tbody tr:hover { background:rgba(59,130,246,.06); }
+    #logTable tbody td { font-size:.8rem; padding:8px 14px; vertical-align:middle; color:var(--t2); font-family:'SFMono-Regular','Consolas',monospace; }
+    .log-row:hover td { color:var(--t1); }
+    .badge-hit{background:var(--green)} .badge-miss{background:#475569} .badge-stored{background:var(--accent)} .badge-no-origin{background:var(--red)}
+    .status-2xx{color:#4ade80} .status-3xx{color:var(--acl)} .status-4xx{color:#fbbf24} .status-5xx{color:#f87171}
     .filter-bar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
-    .filter-bar input, .filter-bar select { background:#1a1f2e; border:1px solid #2d3f52; color:#e2e8f0; font-size:.82rem; }
-    .filter-bar input::placeholder { color: #475569; }
-    .auto-badge { font-size:.7rem; padding:2px 6px; }
-    #detail { background:#0f1117; border:1px solid #2d3f52; border-radius:6px; padding:12px; font-size:.8rem; }
-    a.back { color:#60a5fa; text-decoration:none; }
-    a.back:hover { text-decoration:underline; }
-    .health-ok { color:#4ade80; }
-    .health-err { color:#f87171; }
+    .filter-bar input,.filter-bar select { background:var(--bg); border:1px solid var(--bdr); color:var(--t1); font-size:.8rem; border-radius:8px; transition:border-color var(--tr),box-shadow var(--tr); }
+    .filter-bar input:focus,.filter-bar select:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,130,246,.15); }
+    .filter-bar input::placeholder { color:var(--tm); }
+    .filter-bar .btn { border-radius:8px; }
+    #detail { background:var(--bg); border:1px solid var(--bdr); border-radius:8px; padding:14px; font-size:.8rem; font-family:'SFMono-Regular','Consolas',monospace; color:var(--t2); }
+    .origin-item { padding:10px 0; border-bottom:1px solid var(--bdr); }
+    .origin-item:last-child { border-bottom:none; }
+    .origin-name { font-weight:600; font-size:.85rem; color:var(--t1); }
+    .origin-url { font-size:.75rem; color:var(--tm); font-family:'SFMono-Regular','Consolas',monospace; }
+    .health-ok{color:var(--green)} .health-err{color:var(--red)}
     ::-webkit-scrollbar { width:6px; height:6px; }
-    ::-webkit-scrollbar-track { background:#1a1f2e; }
-    ::-webkit-scrollbar-thumb { background:#2d3f52; border-radius:3px; }
+    ::-webkit-scrollbar-track { background:var(--card); border-radius:3px; }
+    ::-webkit-scrollbar-thumb { background:var(--bdr); border-radius:3px; }
+    ::-webkit-scrollbar-thumb:hover { background:var(--tm); }
+    a.back{color:var(--acl);text-decoration:none} a.back:hover{text-decoration:underline}
   </style>
 </head>
 <body>
 
 <div class="top-bar">
-  <div class="brand">CDN <span>Debug</span></div>
-  <a href="/" class="back"><i class="bi bi-arrow-left"></i> Back to Admin</a>
+  <div class="brand">
+    <div class="brand-icon"><i class="bi bi-hdd-stack"></i></div>
+    <div class="brand-label">CDN Manager <span>/ Debug</span></div>
+  </div>
+  <a href="/" class="back-link"><i class="bi bi-arrow-left"></i> Back to Admin</a>
   <div class="ms-auto d-flex align-items-center gap-3">
     <span id="autoRefreshToggle" class="badge bg-success auto-badge" style="cursor:pointer" onclick="toggleAutoRefresh()">
       <i class="bi bi-play-fill"></i> Auto-refresh ON
@@ -73,13 +83,13 @@
 
   <!-- Stats row -->
   <div class="d-flex flex-wrap gap-3 mb-3" id="statsRow">
-    <div class="stat-pill"><span class="text-success">●</span> Hits <span class="num text-success" id="dHits">—</span></div>
-    <div class="stat-pill"><span class="text-secondary">●</span> Misses <span class="num text-secondary" id="dMisses">—</span></div>
-    <div class="stat-pill"><span class="text-primary">●</span> Cached <span class="num text-primary" id="dCached">—</span></div>
-    <div class="stat-pill"><span class="text-warning">●</span> Errors <span class="num text-warning" id="dErrors">—</span></div>
-    <div class="stat-pill"><span class="text-info">●</span> Hit Rate <span class="num text-info" id="dRate">—</span></div>
-    <div class="stat-pill"><span class="text-white">●</span> Uptime <span class="num text-white" id="dUptime">—</span></div>
-    <div class="stat-pill"><span class="text-cyan">●</span> Memory <span class="num" id="dMem">—</span> MB</div>
+    <div class="stat-card a-green"><div class="stat-label">Hits</div><div class="stat-value" id="dHits">—</div></div>
+    <div class="stat-card a-gray"><div class="stat-label">Misses</div><div class="stat-value" id="dMisses">—</div></div>
+    <div class="stat-card a-blue"><div class="stat-label">Cached</div><div class="stat-value" id="dCached">—</div></div>
+    <div class="stat-card a-yellow"><div class="stat-label">Errors</div><div class="stat-value" id="dErrors">—</div></div>
+    <div class="stat-card a-cyan"><div class="stat-label">Hit Rate</div><div class="stat-value" id="dRate">—</div></div>
+    <div class="stat-card a-white"><div class="stat-label">Uptime</div><div class="stat-value" id="dUptime">—</div></div>
+    <div class="stat-card a-cyan"><div class="stat-label">Memory</div><div class="stat-value"><span id="dMem">—</span> <span style="font-size:.7rem;font-weight:400;color:var(--tm)">MB</span></div></div>
   </div>
 
   <div class="row g-3">
@@ -106,9 +116,9 @@
             <button class="btn btn-sm btn-outline-secondary" onclick="loadLogs()"><i class="bi bi-arrow-clockwise"></i></button>
           </div>
         </div>
-        <div style="max-height:520px;overflow-y:auto;">
+        <div class="log-wrap">
           <table class="table table-dark table-sm mb-0" id="logTable">
-            <thead style="position:sticky;top:0;background:#1a1f2e;z-index:1;">
+            <thead>
               <tr>
                 <th style="width:80px">Time</th>
                 <th style="width:60px">Method</th>
@@ -123,13 +133,12 @@
             </tbody>
           </table>
         </div>
-        <div class="panel-header border-top-0 border-bottom-0" id="logCount">—</div>
+        <div class="panel-footer" id="logCount">—</div>
       </div>
     </div>
 
     <!-- Right column -->
     <div class="col-xl-4">
-
       <!-- Server health -->
       <div class="panel mb-3">
         <div class="panel-header"><i class="bi bi-heart-pulse"></i> Server Health</div>
@@ -144,7 +153,6 @@
           </div>
         </div>
       </div>
-
       <!-- Origin health -->
       <div class="panel mb-3">
         <div class="panel-header d-flex justify-content-between">
@@ -155,7 +163,6 @@
           <span class="text-secondary small">Loading…</span>
         </div>
       </div>
-
       <!-- Request detail -->
       <div class="panel">
         <div class="panel-header"><i class="bi bi-info-circle"></i> Request Detail</div>
@@ -266,10 +273,10 @@ async function loadOrigins() {
     return;
   }
   panel.innerHTML = origins.map(o => `
-    <div class="d-flex justify-content-between align-items-start mb-2 pb-2 border-bottom border-secondary">
+    <div class="origin-item d-flex justify-content-between align-items-start">
       <div>
-        <div class="fw-semibold small">${escHtml(o.name)}</div>
-        <div class="text-secondary" style="font-size:.75rem">${escHtml(o.originUrl)}</div>
+        <div class="origin-name">${escHtml(o.name)}</div>
+        <div class="origin-url">${escHtml(o.originUrl)}</div>
         <span class="badge ${o.active ? 'bg-success' : 'bg-secondary'}" style="font-size:.65rem">${o.active ? 'Active' : 'Inactive'}</span>
         <span class="badge bg-dark border border-secondary" style="font-size:.65rem">${o.type}</span>
       </div>
