@@ -4,12 +4,14 @@
  * Plugin URI:  https://github.com/markgir/cdn
  * Description: Rewrites static-asset URLs (CSS, JS, images, fonts) to your CDN endpoint, dramatically speeding up WooCommerce store page loads.
  * Version:     1.0.0
- * Author:      CDN Manager
+ * Author:      CDN Manager — Developed by iddigital.pt
  * License:     GPL-2.0+
  * Text Domain: cdn-optimizer
  *
  * Requires at least: 5.8
  * Requires PHP:      7.4
+ *
+ * Credits: Developed by iddigital.pt
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

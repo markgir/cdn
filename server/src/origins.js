@@ -3,6 +3,8 @@
  *
  * Manages the list of upstream origin servers (WooCommerce / PrestaShop stores).
  * Persisted to a simple JSON file so origins survive restarts without a database.
+ *
+ * Credits: Developed by iddigital.pt
  */
 
 const fs = require('fs');

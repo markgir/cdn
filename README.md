@@ -1,6 +1,8 @@
 # CDN Manager — E-commerce Acceleration Platform
 
-A self-hosted CDN (Content Delivery Network) server purpose-built for **WooCommerce** and **PrestaShop** stores. Caches static assets (CSS, JS, images, fonts), provides a full admin backoffice, a live debug panel, and ready-to-use store plugins.
+> Developed by [iddigital.pt](https://iddigital.pt)
+
+A self-hosted CDN (Content Delivery Network) server purpose-built for **WooCommerce** and **PrestaShop** stores. Caches static assets (CSS, JS, images, fonts), provides a full admin backoffice with image generation, a live debug panel, and ready-to-use store plugins.
 
 ---
 
@@ -10,11 +12,40 @@ A self-hosted CDN (Content Delivery Network) server purpose-built for **WooComme
 |---|---|
 | **Reverse Proxy + Cache** | LRU in-memory cache for static assets with configurable TTL |
 | **Admin Backoffice** | Dashboard with stats, origin management, cache inspection & purge |
+| **Image Generator** | Generate placeholder, banner, and OG images directly from the backoffice |
 | **Debug Panel** | Real-time request log, cache hit/miss inspector, origin health checks |
 | **WooCommerce Plugin** | PHP plugin that rewrites asset URLs → CDN with zero config |
 | **PrestaShop Module** | PHP module with identical functionality for PS 1.7 / 8.x |
 | **Docker ready** | Single `docker-compose up` deployment |
 | **REST API** | Full JSON API for automation and CI/CD integration |
+| **One-Command Install** | Single `./install.sh` sets up everything you need |
+
+---
+
+## One-Command Install
+
+Install all required software with a single command:
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/markgir/cdn.git
+cd cdn
+
+# 2. Run the installer
+chmod +x install.sh
+./install.sh
+
+# 3. Start the server
+cd server && node index.js
+```
+
+The installer will:
+- ✅ Verify Node.js ≥ 18 is installed
+- ✅ Verify npm is available
+- ✅ Install all server dependencies
+- ✅ Create the `.env` configuration file
+- ✅ Set up the data directory
+- ✅ Verify all dependencies are working
 
 ---
 
@@ -111,6 +142,19 @@ Each origin has a **Test** button that checks connectivity and shows latency.
 - **Flush all** — clear the entire cache immediately
 - Browse and search all cached keys
 
+### Image Generator
+
+Generate placeholder, banner, and social media images directly from the backoffice:
+
+- **Custom dimensions** — set width and height (1–4096 px)
+- **Colors** — pick background and text colors with a color picker
+- **Custom text** — add any label or leave blank for automatic dimensions text
+- **Quick presets** — Product (800×800), OG Image (1200×630), Banner (728×90), Thumbnail (150×150)
+- **Download** — save generated images as SVG
+- **Direct URL** — copy a direct URL for embedding in your store
+
+Images are generated as lightweight SVG graphics — no external dependencies required.
+
 ---
 
 ## Debug Panel
@@ -150,6 +194,12 @@ All endpoints are served on the admin port (`3001` by default).
 | `GET` | `/api/cache/keys` | List cache keys (`?prefix=`, `?limit=`) |
 | `POST` | `/api/cache/purge` | Purge `{ key }` or `{ prefix }` |
 | `POST` | `/api/cache/flush` | Flush entire cache |
+
+### Images
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/api/images/generate` | Generate a placeholder/banner image (SVG or base64) |
+| `GET` | `/api/images/preview` | Preview an image with query params (`?width=`, `?height=`, `?bgColor=`, `?textColor=`, `?text=`, `?fontSize=`) |
 
 ### Logs
 | Method | Path | Description |
@@ -201,14 +251,14 @@ All settings are read from environment variables (or a `.env` file in the projec
 
 ## Comparison with Existing Solutions
 
-| Solution | Self-hosted | WooCommerce ready | PrestaShop ready | Backoffice | Debug panel | Cost |
-|---|---|---|---|---|---|---|
-| **CDN Manager (this)** | ✅ | ✅ plugin | ✅ module | ✅ full UI | ✅ real-time | Free |
-| Cloudflare | ❌ SaaS | Manual config | Manual config | Limited | Limited | Paid tiers |
-| Varnish Cache | ✅ | Manual config | Manual config | 3rd party | None | Free (complex) |
-| Nginx proxy_cache | ✅ | Manual config | Manual config | None | None | Free (complex) |
-| WP Rocket CDN | ❌ SaaS | ✅ | ❌ | ✅ | ❌ | Paid |
-| KeyCDN | ❌ SaaS | Plugin available | Plugin available | ✅ | Limited | Paid |
+| Solution | Self-hosted | WooCommerce ready | PrestaShop ready | Backoffice | Debug panel | Image Gen | Cost |
+|---|---|---|---|---|---|---|---|
+| **CDN Manager (this)** | ✅ | ✅ plugin | ✅ module | ✅ full UI | ✅ real-time | ✅ | Free |
+| Cloudflare | ❌ SaaS | Manual config | Manual config | Limited | Limited | ❌ | Paid tiers |
+| Varnish Cache | ✅ | Manual config | Manual config | 3rd party | None | ❌ | Free (complex) |
+| Nginx proxy_cache | ✅ | Manual config | Manual config | None | None | ❌ | Free (complex) |
+| WP Rocket CDN | ❌ SaaS | ✅ | ❌ | ✅ | ❌ | ❌ | Paid |
+| KeyCDN | ❌ SaaS | Plugin available | Plugin available | ✅ | Limited | ❌ | Paid |
 
 ---
 
@@ -228,3 +278,15 @@ npm test       # Jest test suite
 - The admin backoffice has no authentication by default. **For production**, place it behind a reverse proxy (nginx/Caddy) with HTTP Basic Auth or IP allowlisting.
 - Set a strong `ADMIN_SECRET` in `.env` if you extend the API with authentication middleware.
 - The CDN proxy forwards `X-Forwarded-For` headers to preserve client IPs at the origin.
+
+---
+
+## Credits
+
+Developed by [iddigital.pt](https://iddigital.pt)
+
+---
+
+## License
+
+MIT

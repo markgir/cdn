@@ -1,3 +1,6 @@
+// CDN Manager — Logger Module
+// Credits: Developed by iddigital.pt
+
 const winston = require('winston');
 const config = require('./config');
 

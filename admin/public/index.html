@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- CDN Manager — Admin Dashboard | Credits: Developed by iddigital.pt -->
   <title>CDN Admin — Dashboard</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" integrity="sha384-tViUnnbYAV00ruLTd/hcZKbKMNFQMasXqTCKb/EJRC0x4c5aZHBYRXflUEQBikgm" crossorigin="anonymous" />
@@ -58,6 +59,11 @@
     <li class="nav-item">
       <a class="nav-link" href="/debug">
         <i class="bi bi-bug"></i> Debug
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#" data-section="images">
+        <i class="bi bi-image"></i> Images
       </a>
     </li>
     <li class="nav-item mt-3" style="border-top:1px solid #2d3f52;">
@@ -197,6 +203,88 @@
             <tr><td colspan="2" class="text-center text-muted py-4">No keys yet…</td></tr>
           </tbody>
         </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Images Section ──────────────────────────────────────────────── -->
+  <section id="sec-images" class="section">
+    <h4 class="fw-bold mb-4">Image Generator</h4>
+    <p class="text-muted mb-4">Generate placeholder and banner images for your store. Useful for product placeholders, social media banners, and promotional graphics.</p>
+
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <div class="card border-0 shadow-sm p-4">
+          <h6 class="fw-semibold mb-3"><i class="bi bi-sliders"></i> Settings</h6>
+          <form id="imageForm" onsubmit="generateImage(event)">
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small">Width (px)</label>
+                <input type="number" class="form-control" id="imgWidth" value="600" min="1" max="4096" />
+              </div>
+              <div class="col-6">
+                <label class="form-label small">Height (px)</label>
+                <input type="number" class="form-control" id="imgHeight" value="400" min="1" max="4096" />
+              </div>
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small">Background Color</label>
+                <div class="input-group">
+                  <input type="color" class="form-control form-control-color" id="imgBgPicker" value="#cccccc" onchange="document.getElementById('imgBgColor').value=this.value" />
+                  <input type="text" class="form-control" id="imgBgColor" value="#cccccc" placeholder="#cccccc" onchange="document.getElementById('imgBgPicker').value=this.value" />
+                </div>
+              </div>
+              <div class="col-6">
+                <label class="form-label small">Text Color</label>
+                <div class="input-group">
+                  <input type="color" class="form-control form-control-color" id="imgTcPicker" value="#333333" onchange="document.getElementById('imgTextColor').value=this.value" />
+                  <input type="text" class="form-control" id="imgTextColor" value="#333333" placeholder="#333333" onchange="document.getElementById('imgTcPicker').value=this.value" />
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small">Text (leave empty for dimensions)</label>
+              <input type="text" class="form-control" id="imgText" placeholder="e.g. Product Image" maxlength="200" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label small">Font Size (px, 0 = auto)</label>
+              <input type="number" class="form-control" id="imgFontSize" value="0" min="0" max="200" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label small">Quick Presets</label>
+              <div class="d-flex gap-2 flex-wrap">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="applyPreset(800,800,'#f0f0f0','#999','Product Photo')">Product (800×800)</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="applyPreset(1200,630,'#1e2a3a','#ffffff','OG Image')">OG Image (1200×630)</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="applyPreset(728,90,'#0d6efd','#ffffff','Banner')">Banner (728×90)</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="applyPreset(150,150,'#eeeeee','#aaaaaa','')">Thumbnail (150×150)</button>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="bi bi-image"></i> Generate Image
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="card border-0 shadow-sm p-4">
+          <h6 class="fw-semibold mb-3"><i class="bi bi-eye"></i> Preview</h6>
+          <div id="imagePreview" class="text-center p-3 bg-light rounded" style="min-height:200px;display:flex;align-items:center;justify-content:center;">
+            <span class="text-muted">Click "Generate Image" to see a preview</span>
+          </div>
+          <div id="imageActions" class="mt-3 d-flex gap-2 flex-wrap" style="display:none!important;">
+            <a id="imgDownloadSvg" class="btn btn-sm btn-outline-success" download="placeholder.svg">
+              <i class="bi bi-download"></i> Download SVG
+            </a>
+            <button class="btn btn-sm btn-outline-secondary" onclick="copyImageUrl()">
+              <i class="bi bi-clipboard"></i> Copy URL
+            </button>
+          </div>
+          <div id="imageUrlBox" class="mt-2" style="display:none;">
+            <label class="form-label small text-muted">Direct URL (for embedding):</label>
+            <input type="text" class="form-control form-control-sm font-monospace" id="imageDirectUrl" readonly />
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -537,6 +625,59 @@ async function flushCache() {
   const res = await api('/cache/flush', { method: 'POST' });
   toast(res.message);
   loadKeys();
+}
+
+// ── Images ──────────────────────────────────────────────────────────────────
+function applyPreset(w, h, bg, tc, text) {
+  document.getElementById('imgWidth').value = w;
+  document.getElementById('imgHeight').value = h;
+  document.getElementById('imgBgColor').value = bg;
+  document.getElementById('imgBgPicker').value = bg;
+  document.getElementById('imgTextColor').value = tc;
+  document.getElementById('imgTcPicker').value = tc;
+  document.getElementById('imgText').value = text;
+  document.getElementById('imgFontSize').value = 0;
+}
+
+async function generateImage(e) {
+  if (e) e.preventDefault();
+  const params = {
+    width: document.getElementById('imgWidth').value,
+    height: document.getElementById('imgHeight').value,
+    bgColor: document.getElementById('imgBgColor').value,
+    textColor: document.getElementById('imgTextColor').value,
+    text: document.getElementById('imgText').value,
+    fontSize: document.getElementById('imgFontSize').value,
+  };
+
+  // Build preview URL
+  const qs = new URLSearchParams(params).toString();
+  const previewUrl = '/api/images/preview?' + qs;
+
+  // Show preview
+  const preview = document.getElementById('imagePreview');
+  preview.innerHTML = `<img src="${previewUrl}" style="max-width:100%;height:auto;border:1px solid #dee2e6;border-radius:8px;" alt="Generated Image" />`;
+
+  // Show actions
+  document.getElementById('imageActions').style.cssText = '';
+
+  // Set download link
+  const dlLink = document.getElementById('imgDownloadSvg');
+  dlLink.href = previewUrl;
+  dlLink.download = `placeholder-${params.width}x${params.height}.svg`;
+
+  // Show direct URL
+  const urlBox = document.getElementById('imageUrlBox');
+  urlBox.style.display = '';
+  const fullUrl = window.location.origin + previewUrl;
+  document.getElementById('imageDirectUrl').value = fullUrl;
+
+  toast('Image generated!');
+}
+
+function copyImageUrl() {
+  const url = document.getElementById('imageDirectUrl').value;
+  navigator.clipboard.writeText(url).then(() => toast('URL copied to clipboard!'));
 }
 
 // ── Init ────────────────────────────────────────────────────────────────────

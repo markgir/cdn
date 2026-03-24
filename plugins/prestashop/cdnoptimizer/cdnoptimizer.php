@@ -4,6 +4,8 @@
  *
  * Rewrites static-asset URLs in page output to point at your CDN endpoint,
  * reducing origin load and improving page-load times for PrestaShop stores.
+ *
+ * Credits: Developed by iddigital.pt
  */
 
 if ( ! defined( '_PS_VERSION_' ) ) {
@@ -17,7 +19,7 @@ class CdnOptimizer extends Module
         $this->name          = 'cdnoptimizer';
         $this->tab           = 'administration';
         $this->version       = '1.0.0';
-        $this->author        = 'CDN Manager';
+        $this->author        = 'CDN Manager — iddigital.pt';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = [
             'min' => '1.7.0',
