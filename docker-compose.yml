@@ -1,3 +1,6 @@
+# CDN Manager — Docker Compose
+# Credits: Developed by iddigital.pt
+
 version: '3.9'
 
 services:

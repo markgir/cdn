@@ -1,3 +1,6 @@
+// CDN Manager — Debug Panel Route
+// Credits: Developed by iddigital.pt
+
 const express = require('express');
 const path = require('path');
 

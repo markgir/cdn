@@ -13,6 +13,8 @@
  *   GET  /api/cache/keys      – list cache keys
  *   GET  /api/logs            – recent request logs
  *   POST /api/origins/:id/test – test connectivity to origin
+ *
+ * Credits: Developed by iddigital.pt
  */
 
 const express = require('express');

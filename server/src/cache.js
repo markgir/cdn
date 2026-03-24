@@ -1,3 +1,6 @@
+// CDN Manager — Cache Module
+// Credits: Developed by iddigital.pt
+
 const { LRUCache } = require('lru-cache');
 const config = require('./config');
 const { logger } = require('./logger');

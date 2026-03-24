@@ -5,6 +5,8 @@
  *  1. Checks in-memory cache for cacheable assets → serves HIT immediately.
  *  2. Resolves the upstream origin for the request Host header.
  *  3. Proxies the request to the origin, caches the response when appropriate.
+ *
+ * Credits: Developed by iddigital.pt
  */
 
 const express = require('express');

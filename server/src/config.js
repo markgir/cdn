@@ -1,6 +1,8 @@
 /**
  * CDN Configuration
  * Loaded from environment variables with sensible defaults.
+ *
+ * Credits: Developed by iddigital.pt
  */
 
 const config = {

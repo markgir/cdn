@@ -1,3 +1,6 @@
+// CDN Manager — Server Entry Point
+// Credits: Developed by iddigital.pt
+
 require('dotenv').config();
 
 const app = require('./src/app');
