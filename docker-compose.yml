@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  cdn:
+    build: .
+    container_name: cdn-server
+    restart: unless-stopped
+    ports:
+      - "${CDN_PORT:-3000}:3000"     # CDN Proxy
+      - "${ADMIN_PORT:-3001}:3001"   # Admin Backoffice
+    volumes:
+      - cdn_data:/app/data           # Persists origin configuration
+    environment:
+      CDN_PORT: "3000"
+      ADMIN_PORT: "3001"
+      CACHE_TTL: "${CACHE_TTL:-3600}"
+      CACHE_MAX_ITEMS: "${CACHE_MAX_ITEMS:-10000}"
+      LOG_LEVEL: "${LOG_LEVEL:-info}"
+      PROXY_TIMEOUT: "${PROXY_TIMEOUT:-30000}"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/api/status"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  cdn_data:
+    driver: local

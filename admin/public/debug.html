@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CDN Debug Panel</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" integrity="sha384-tViUnnbYAV00ruLTd/hcZKbKMNFQMasXqTCKb/EJRC0x4c5aZHBYRXflUEQBikgm" crossorigin="anonymous" />
+  <style>
+    body { background: #0f1117; color: #e2e8f0; font-family: 'Consolas', 'Monaco', monospace; }
+    .top-bar {
+      background: #1e2a3a; padding: 12px 24px;
+      display: flex; align-items: center; gap: 16px;
+      border-bottom: 1px solid #2d3f52;
+    }
+    .top-bar .brand { color: #fff; font-weight:700; font-size:1.1rem; }
+    .top-bar .brand span { color: #f59e0b; }
+    .badge-hit  { background:#16a34a; }
+    .badge-miss { background:#475569; }
+    .badge-stored { background:#2563eb; }
+    .badge-no-origin { background:#dc2626; }
+    .log-row { font-size:.82rem; border-bottom: 1px solid #1e2a3a; }
+    .log-row:hover { background: #1e2a3a; }
+    .status-2xx { color: #4ade80; }
+    .status-3xx { color: #60a5fa; }
+    .status-4xx { color: #fbbf24; }
+    .status-5xx { color: #f87171; }
+    .panel { background: #1a1f2e; border: 1px solid #2d3f52; border-radius: 8px; margin-bottom:16px; }
+    .panel-header {
+      padding: 10px 16px; border-bottom: 1px solid #2d3f52;
+      font-size:.85rem; font-weight:600; color:#9ab0c8; text-transform:uppercase; letter-spacing:.5px;
+    }
+    .panel-body { padding: 16px; }
+    .kv { display: grid; grid-template-columns: 160px 1fr; gap: 6px 16px; font-size:.85rem; }
+    .kv .k { color: #64748b; }
+    .kv .v { color: #e2e8f0; font-weight: 500; }
+    .stat-pill {
+      display:inline-flex; align-items:center; gap:6px;
+      background:#1e2a3a; border:1px solid #2d3f52; border-radius:20px;
+      padding: 4px 14px; font-size:.82rem;
+    }
+    .stat-pill .num { font-size:1.1rem; font-weight:700; }
+    #logTable tbody tr { cursor:pointer; }
+    .filter-bar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .filter-bar input, .filter-bar select { background:#1a1f2e; border:1px solid #2d3f52; color:#e2e8f0; font-size:.82rem; }
+    .filter-bar input::placeholder { color: #475569; }
+    .auto-badge { font-size:.7rem; padding:2px 6px; }
+    #detail { background:#0f1117; border:1px solid #2d3f52; border-radius:6px; padding:12px; font-size:.8rem; }
+    a.back { color:#60a5fa; text-decoration:none; }
+    a.back:hover { text-decoration:underline; }
+    .health-ok { color:#4ade80; }
+    .health-err { color:#f87171; }
+    ::-webkit-scrollbar { width:6px; height:6px; }
+    ::-webkit-scrollbar-track { background:#1a1f2e; }
+    ::-webkit-scrollbar-thumb { background:#2d3f52; border-radius:3px; }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="brand">CDN <span>Debug</span></div>
+  <a href="/" class="back"><i class="bi bi-arrow-left"></i> Back to Admin</a>
+  <div class="ms-auto d-flex align-items-center gap-3">
+    <span id="autoRefreshToggle" class="badge bg-success auto-badge" style="cursor:pointer" onclick="toggleAutoRefresh()">
+      <i class="bi bi-play-fill"></i> Auto-refresh ON
+    </span>
+    <span class="text-secondary small" id="lastUpdated">—</span>
+  </div>
+</div>
+
+<div class="container-fluid p-3">
+
+  <!-- Stats row -->
+  <div class="d-flex flex-wrap gap-3 mb-3" id="statsRow">
+    <div class="stat-pill"><span class="text-success">●</span> Hits <span class="num text-success" id="dHits">—</span></div>
+    <div class="stat-pill"><span class="text-secondary">●</span> Misses <span class="num text-secondary" id="dMisses">—</span></div>
+    <div class="stat-pill"><span class="text-primary">●</span> Cached <span class="num text-primary" id="dCached">—</span></div>
+    <div class="stat-pill"><span class="text-warning">●</span> Errors <span class="num text-warning" id="dErrors">—</span></div>
+    <div class="stat-pill"><span class="text-info">●</span> Hit Rate <span class="num text-info" id="dRate">—</span></div>
+    <div class="stat-pill"><span class="text-white">●</span> Uptime <span class="num text-white" id="dUptime">—</span></div>
+    <div class="stat-pill"><span class="text-cyan">●</span> Memory <span class="num" id="dMem">—</span> MB</div>
+  </div>
+
+  <div class="row g-3">
+    <!-- Log panel -->
+    <div class="col-xl-8">
+      <div class="panel">
+        <div class="panel-header d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-list-ul"></i> Request Log</span>
+          <div class="filter-bar">
+            <input class="form-control" style="width:200px" id="filterUrl" placeholder="Filter URL…" oninput="applyFilters()" />
+            <select class="form-select" style="width:130px" id="filterCache" onchange="applyFilters()">
+              <option value="">All Cache</option>
+              <option value="HIT">HIT only</option>
+              <option value="MISS">MISS only</option>
+              <option value="NO-ORIGIN">NO-ORIGIN</option>
+            </select>
+            <select class="form-select" style="width:120px" id="filterStatus" onchange="applyFilters()">
+              <option value="">All Status</option>
+              <option value="2">2xx</option>
+              <option value="3">3xx</option>
+              <option value="4">4xx</option>
+              <option value="5">5xx</option>
+            </select>
+            <button class="btn btn-sm btn-outline-secondary" onclick="loadLogs()"><i class="bi bi-arrow-clockwise"></i></button>
+          </div>
+        </div>
+        <div style="max-height:520px;overflow-y:auto;">
+          <table class="table table-dark table-sm mb-0" id="logTable">
+            <thead style="position:sticky;top:0;background:#1a1f2e;z-index:1;">
+              <tr>
+                <th style="width:80px">Time</th>
+                <th style="width:60px">Method</th>
+                <th>URL</th>
+                <th style="width:60px">Status</th>
+                <th style="width:80px">Cache</th>
+                <th style="width:65px">Duration</th>
+              </tr>
+            </thead>
+            <tbody id="logBody">
+              <tr><td colspan="6" class="text-center text-secondary py-4">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel-header border-top-0 border-bottom-0" id="logCount">—</div>
+      </div>
+    </div>
+
+    <!-- Right column -->
+    <div class="col-xl-4">
+
+      <!-- Server health -->
+      <div class="panel mb-3">
+        <div class="panel-header"><i class="bi bi-heart-pulse"></i> Server Health</div>
+        <div class="panel-body">
+          <div class="kv" id="healthKv">
+            <span class="k">Status</span><span class="v" id="hStatus">—</span>
+            <span class="k">Node.js</span><span class="v" id="hNode">—</span>
+            <span class="k">Origins</span><span class="v" id="hOrigins">—</span>
+            <span class="k">Cache Size</span><span class="v" id="hCacheSize">—</span>
+            <span class="k">Max Items</span><span class="v" id="hCacheMax">—</span>
+            <span class="k">Default TTL</span><span class="v" id="hTtl">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Origin health -->
+      <div class="panel mb-3">
+        <div class="panel-header d-flex justify-content-between">
+          <span><i class="bi bi-hdd-network"></i> Origins</span>
+          <button class="btn btn-xs btn-outline-info btn-sm py-0 px-2" onclick="testAllOrigins()">Test All</button>
+        </div>
+        <div class="panel-body" id="originsPanel">
+          <span class="text-secondary small">Loading…</span>
+        </div>
+      </div>
+
+      <!-- Request detail -->
+      <div class="panel">
+        <div class="panel-header"><i class="bi bi-info-circle"></i> Request Detail</div>
+        <div class="panel-body">
+          <pre id="detail" class="mb-0">Click a log row to inspect…</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script>
+let allLogs = [];
+let autoRefresh = true;
+let refreshTimer = null;
+
+async function api(path) {
+  const r = await fetch('/api' + path);
+  return r.json();
+}
+
+async function postApi(path, body) {
+  const r = await fetch('/api' + path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  return r.json();
+}
+
+// ── Stats ────────────────────────────────────────────────────────────────────
+async function loadStatus() {
+  const d = await api('/status');
+  document.getElementById('dHits').textContent    = d.cache?.hits   ?? '—';
+  document.getElementById('dMisses').textContent  = d.cache?.misses ?? '—';
+  document.getElementById('dCached').textContent  = d.cache?.size   ?? '—';
+  document.getElementById('dErrors').textContent  = d.cache?.errors ?? '—';
+  document.getElementById('dRate').textContent    = d.cache?.hitRate ?? '—';
+  document.getElementById('dUptime').textContent  = d.uptimeHuman   ?? '—';
+  document.getElementById('dMem').textContent     = d.memoryMB      ?? '—';
+
+  document.getElementById('hStatus').innerHTML    = `<span class="health-ok">● OK</span>`;
+  document.getElementById('hNode').textContent    = d.nodeVersion   ?? '—';
+  document.getElementById('hOrigins').textContent = d.origins       ?? '—';
+  document.getElementById('hCacheSize').textContent = d.cache?.size ?? '—';
+  document.getElementById('hCacheMax').textContent  = d.cache?.maxItems ?? '—';
+  document.getElementById('hTtl').textContent       = (d.cache?.defaultTtl ?? '—') + 's';
+  document.getElementById('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+}
+
+// ── Logs ─────────────────────────────────────────────────────────────────────
+async function loadLogs() {
+  const d = await api('/logs?limit=200');
+  allLogs = d.logs || [];
+  applyFilters();
+}
+
+function applyFilters() {
+  const urlF     = (document.getElementById('filterUrl')?.value || '').toLowerCase();
+  const cacheF   = document.getElementById('filterCache')?.value || '';
+  const statusF  = document.getElementById('filterStatus')?.value || '';
+
+  const filtered = allLogs.filter(l => {
+    if (urlF    && !(l.url || '').toLowerCase().includes(urlF)) return false;
+    if (cacheF  && !(l.cacheStatus || '').includes(cacheF))    return false;
+    if (statusF && !String(l.status || '').startsWith(statusF)) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('logBody');
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-secondary py-4">No matching requests.</td></tr>';
+    document.getElementById('logCount').textContent = '0 entries';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map((l, i) => {
+    const time     = new Date(l.timestamp).toLocaleTimeString();
+    const sc       = String(l.status || '');
+    const statusCl = sc.startsWith('5') ? 'status-5xx' : sc.startsWith('4') ? 'status-4xx' : sc.startsWith('3') ? 'status-3xx' : 'status-2xx';
+    const cs       = l.cacheStatus || 'MISS';
+    const badgeCl  = cs.includes('HIT') ? 'badge-hit' : cs.includes('STORED') ? 'badge-stored' : cs === 'NO-ORIGIN' ? 'badge-no-origin' : 'badge-miss';
+    const url      = (l.url || '').length > 55 ? (l.url || '').slice(0, 52) + '…' : (l.url || '');
+    return `<tr class="log-row" onclick='showDetail(${JSON.stringify(l)})'>
+      <td class="text-secondary">${time}</td>
+      <td><span class="badge bg-secondary">${l.method || '—'}</span></td>
+      <td class="font-monospace" title="${(l.url||'').replace(/"/g,'&quot;')}">${url}</td>
+      <td class="${statusCl} fw-bold">${l.status ?? '—'}</td>
+      <td><span class="badge ${badgeCl}" style="font-size:.7rem">${cs}</span></td>
+      <td class="text-secondary">${l.duration != null ? l.duration + 'ms' : '—'}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('logCount').textContent = `Showing ${filtered.length} of ${allLogs.length} entries`;
+}
+
+function showDetail(l) {
+  document.getElementById('detail').textContent = JSON.stringify(l, null, 2);
+}
+
+// ── Origins ──────────────────────────────────────────────────────────────────
+async function loadOrigins() {
+  const origins = await api('/origins');
+  const panel   = document.getElementById('originsPanel');
+  if (!origins.length) {
+    panel.innerHTML = '<span class="text-secondary small">No origins configured.</span>';
+    return;
+  }
+  panel.innerHTML = origins.map(o => `
+    <div class="d-flex justify-content-between align-items-start mb-2 pb-2 border-bottom border-secondary">
+      <div>
+        <div class="fw-semibold small">${escHtml(o.name)}</div>
+        <div class="text-secondary" style="font-size:.75rem">${escHtml(o.originUrl)}</div>
+        <span class="badge ${o.active ? 'bg-success' : 'bg-secondary'}" style="font-size:.65rem">${o.active ? 'Active' : 'Inactive'}</span>
+        <span class="badge bg-dark border border-secondary" style="font-size:.65rem">${o.type}</span>
+      </div>
+      <button class="btn btn-sm btn-outline-info py-0 px-2 ms-2" style="font-size:.72rem" onclick="testOrigin('${o.id}',this)">Test</button>
+    </div>
+  `).join('');
+}
+
+async function testOrigin(id, btn) {
+  btn.disabled = true;
+  btn.textContent = '…';
+  const r = await postApi('/origins/' + id + '/test', {});
+  btn.disabled = false;
+  if (r.reachable) {
+    btn.innerHTML = `<span class="text-success">${r.latencyMs}ms</span>`;
+  } else {
+    btn.innerHTML = `<span class="text-danger">Error</span>`;
+    btn.title = r.error;
+  }
+}
+
+async function testAllOrigins() {
+  const origins = await api('/origins');
+  for (const o of origins) {
+    const r = await postApi('/origins/' + o.id + '/test', {});
+    console.log(`${o.name}: ${r.reachable ? r.latencyMs + 'ms' : 'ERROR - ' + r.error}`);
+  }
+  loadOrigins();
+}
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Auto-refresh ─────────────────────────────────────────────────────────────
+function startAutoRefresh() {
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = setInterval(() => { loadStatus(); loadLogs(); }, 5000);
+}
+
+function stopAutoRefresh() {
+  if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
+}
+
+function toggleAutoRefresh() {
+  autoRefresh = !autoRefresh;
+  const el = document.getElementById('autoRefreshToggle');
+  if (autoRefresh) {
+    startAutoRefresh();
+    el.className = 'badge bg-success auto-badge';
+    el.innerHTML = '<i class="bi bi-play-fill"></i> Auto-refresh ON';
+  } else {
+    stopAutoRefresh();
+    el.className = 'badge bg-secondary auto-badge';
+    el.innerHTML = '<i class="bi bi-pause-fill"></i> Auto-refresh OFF';
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+loadStatus();
+loadLogs();
+loadOrigins();
+startAutoRefresh();
+</script>
+</body>
+</html>
