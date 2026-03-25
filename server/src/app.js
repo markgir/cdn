@@ -68,6 +68,7 @@ adminApp.use(helmet({
       fontSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
       imgSrc: ["'self'", 'data:'],
       connectSrc: ["'self'"],
+      scriptSrcAttr: ["'unsafe-inline'"],
     },
   },
 }));

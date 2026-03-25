@@ -628,7 +628,8 @@ function escHtml(s) {
 async function api(path, opts) {
   opts = opts || {};
   var res = await fetch('/api' + path, Object.assign({ headers: { 'Content-Type': 'application/json' } }, opts));
-  return res.json();
+  var text = await res.text();
+  try { return JSON.parse(text); } catch (e) { throw new Error('Invalid JSON response (status ' + res.status + ')'); }
 }
 
 function toast(msg, type) {
@@ -961,7 +962,7 @@ async function loadGitStatus() {
     document.getElementById('footerVersion').textContent = versionText;
     c.innerHTML = html;
   } catch (e) {
-    c.innerHTML = '<p class="small text-danger mb-0">Failed to load git status.</p>';
+    c.innerHTML = '<p class="small text-danger mb-0">Failed to load git status. ' + escHtml(e.message || '') + '</p>';
   }
 }
 
@@ -1105,7 +1106,7 @@ async function loadSystem() {
     var la = d.loadAvg || [];
     c.innerHTML = '<div class="settings-grid">' +
       '<div class="card p-4"><h6 class="fw-semibold mb-3"><i class="bi bi-server me-2" style="color:var(--accent)"></i>Server Info</h6>' +
-      ir('Node.js', d.node) + ir('Platform', d.platform + ' / ' + d.arch) + ir('Hostname', d.hostname) + ir('CPUs', d.cpus) + ir('Uptime', d.uptimeHuman || d.uptime) + ir('Load Avg', la.length ? la.map(function(v){return v.toFixed(2);}).join(', ') : '\u2014') +
+      ir('Node.js', d.node) + ir('Platform', d.platform + ' / ' + d.arch) + ir('Hostname', d.hostname) + ir('CPUs', d.cpus) + ir('Uptime', d.uptimeHuman || d.uptime) + ir('Load Avg', la.length ? la.join(', ') : '\u2014') +
       '</div>' +
       '<div class="card p-4"><h6 class="fw-semibold mb-3"><i class="bi bi-sliders me-2" style="color:var(--accent)"></i>Configuration</h6>' +
       (d.config ? ir('CDN Port', d.config.cdnPort) + ir('Admin Port', d.config.adminPort) + ir('Cache TTL', (d.config.cacheTtl || '\u2014') + 's') + ir('Max Items', d.config.cacheMaxItems) + ir('Proxy Timeout', (d.config.proxyTimeout || '\u2014') + 'ms') + ir('Log Level', d.config.logLevel) : '<p style="color:var(--text-secondary)">No config data.</p>') +
@@ -1115,7 +1116,7 @@ async function loadSystem() {
       '<div class="mb-3"><div class="d-flex justify-content-between small mb-1"><span style="color:var(--text-secondary)">Heap Used</span><span class="fw-semibold">' + Math.round(d.heapUsedMB) + ' / ' + Math.round(d.heapTotalMB) + ' MB (' + heapPct + '%)</span></div><div class="mem-bar"><div class="mem-bar-fill" style="width:' + heapPct + '%;background:' + heapClr + '"></div></div></div>' +
       ir('Process Memory', Math.round(d.processMemoryMB || 0) + ' MB') + ir('Free Memory', Math.round(d.freeMemoryMB || 0) + ' MB') +
       '</div></div>';
-  } catch (e) { c.innerHTML = '<div class="text-center text-danger py-4">Failed to load system info.</div>'; }
+  } catch (e) { c.innerHTML = '<div class="text-center text-danger py-4">Failed to load system info. ' + escHtml(e.message || '') + '</div>'; }
 }
 
 function ir(label, value) {
