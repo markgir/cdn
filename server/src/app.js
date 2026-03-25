@@ -14,11 +14,25 @@ const { debugRouter } = require('./routes/debug');
 const { apiRouter } = require('./routes/api');
 const { imagesRouter } = require('./routes/images');
 const { updateRouter } = require('./routes/update');
+const { sslRouter } = require('./routes/ssl');
 const { requestLogger } = require('./logger');
+const ssl = require('./ssl');
 const config = require('./config');
 
 // ── CDN Proxy Application ────────────────────────────────────────────────────
 const cdnApp = express();
+
+// ACME HTTP-01 challenge handler (must be before any redirect)
+cdnApp.use('/.well-known/acme-challenge', (req, res, next) => {
+  const token = req.path.replace(/^\//, '');
+  const response = ssl.getChallengeResponse(token);
+  if (response) {
+    res.setHeader('Content-Type', 'text/plain');
+    return res.send(response);
+  }
+  next();
+});
+
 cdnApp.use(compression());
 cdnApp.use(cors());
 cdnApp.use(requestLogger);
@@ -68,6 +82,7 @@ adminApp.use(helmet({
       fontSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
       imgSrc: ["'self'", 'data:'],
       connectSrc: ["'self'"],
+      scriptSrcAttr: ["'unsafe-inline'"],
     },
   },
 }));
@@ -82,6 +97,7 @@ adminApp.use(express.static(path.join(__dirname, '../../admin/public')));
 adminApp.use('/api', apiRouter);
 adminApp.use('/api/images', imagesRouter);
 adminApp.use('/api/update', updateRouter);
+adminApp.use('/api/ssl', sslRouter);
 adminApp.use('/debug', adminPageLimiter, debugRouter);
 adminApp.use('/', adminPageLimiter, adminRouter);
 

@@ -13,8 +13,8 @@ RUN cd server && npm ci --omit=dev
 COPY server/ ./server/
 COPY admin/  ./admin/
 
-# Create data directory
-RUN mkdir -p data
+# Create data directory (including SSL subdirectory)
+RUN mkdir -p data/ssl
 
 # Set non-root user
 RUN addgroup -S cdn && adduser -S cdn -G cdn && chown -R cdn:cdn /app
@@ -25,7 +25,7 @@ ENV NODE_ENV=production \
     ADMIN_PORT=3001 \
     LOG_LEVEL=info
 
-EXPOSE 3000 3001
+EXPOSE 3000 3001 80 443
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD wget -qO- http://localhost:3001/api/status || exit 1

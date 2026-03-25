@@ -237,6 +237,7 @@
     <div class="nav-item"><a href="#" data-section="images"><i class="bi bi-image"></i> Images</a></div>
     <div class="nav-item"><a href="#" data-section="integration"><i class="bi bi-plug"></i> Integration</a></div>
     <div class="nav-label">System</div>
+    <div class="nav-item"><a href="#" data-section="ssl"><i class="bi bi-shield-lock"></i> SSL Certificates</a></div>
     <div class="nav-item"><a href="#" data-section="updates"><i class="bi bi-cloud-arrow-down"></i> Updates <span class="nav-badge" id="updateBadge" style="display:none">0</span></a></div>
     <div class="nav-item"><a href="#" data-section="settings"><i class="bi bi-gear"></i> Settings</a></div>
   </div>
@@ -476,6 +477,109 @@
     </div>
   </section>
 
+  <!-- SSL Certificates -->
+  <section id="sec-ssl" class="section">
+    <div class="section-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+      <div>
+        <h5>SSL Certificates</h5>
+        <p>Manage HTTPS/SSL certificates for secure CDN delivery</p>
+      </div>
+      <button class="btn btn-sm btn-outline-primary" onclick="loadSslStatus()"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+    </div>
+
+    <!-- Current Certificate Status -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="card" id="sslStatusCard">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div class="stat-icon blue"><i class="bi bi-shield-lock"></i></div>
+              <div>
+                <div class="fw-semibold" style="font-size:1rem">Certificate Status</div>
+                <div class="small" style="color:var(--text-secondary)">Current SSL certificate information</div>
+              </div>
+            </div>
+            <div id="sslStatusContent">
+              <div class="section-loading"><div class="spinner-border spinner-border-sm text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div class="stat-icon green"><i class="bi bi-lightning-charge"></i></div>
+              <div>
+                <div class="fw-semibold" style="font-size:1rem">Quick Actions</div>
+                <div class="small" style="color:var(--text-secondary)">Request, renew, or delete certificates</div>
+              </div>
+            </div>
+            <div id="sslActionsContent">
+              <div class="d-flex gap-2 flex-wrap mb-3">
+                <button class="btn btn-sm btn-primary" onclick="showSslRequestForm()"><i class="bi bi-plus-lg"></i> Request Let's Encrypt</button>
+                <button class="btn btn-sm btn-outline-success" id="sslRenewBtn" onclick="renewSslCert()" style="display:none"><i class="bi bi-arrow-repeat"></i> Renew</button>
+                <button class="btn btn-sm btn-outline-danger" id="sslDeleteBtn" onclick="deleteSslCert()" style="display:none"><i class="bi bi-trash"></i> Delete</button>
+              </div>
+              <p class="small mb-0" style="color:var(--text-secondary)">Use Let's Encrypt for free auto-renewable certificates, or upload your own.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Request Let's Encrypt Certificate Form -->
+    <div class="card mb-4" id="sslRequestCard" style="display:none">
+      <div class="card-header-custom">
+        <span class="fw-semibold"><i class="bi bi-lock me-2" style="color:var(--accent)"></i>Request Let's Encrypt Certificate</span>
+      </div>
+      <div class="card-body p-4">
+        <div class="row g-3">
+          <div class="col-md-5">
+            <label class="form-label small">Domain <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="sslDomain" placeholder="cdn.3rhost.pt" />
+            <small style="color:var(--text-secondary)">The domain that points to this CDN server.</small>
+          </div>
+          <div class="col-md-5">
+            <label class="form-label small">Email <span class="text-danger">*</span></label>
+            <input type="email" class="form-control" id="sslEmail" placeholder="admin@example.com" />
+            <small style="color:var(--text-secondary)">Required for Let's Encrypt notifications.</small>
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <button class="btn btn-primary w-100" onclick="requestSslCert()"><i class="bi bi-shield-check"></i> Request</button>
+          </div>
+        </div>
+        <div class="alert alert-info small mt-3 mb-0">
+          <i class="bi bi-info-circle me-1"></i>
+          <strong>Requirements:</strong> The domain must point to this server (A/CNAME record) and port 80 must be accessible from the internet for ACME HTTP-01 challenge verification.
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload Custom Certificate -->
+    <div class="card mb-4">
+      <div class="card-header-custom d-flex justify-content-between align-items-center">
+        <span class="fw-semibold"><i class="bi bi-upload me-2" style="color:var(--accent)"></i>Upload Custom Certificate</span>
+        <button class="btn btn-sm btn-outline-secondary" onclick="toggleSslUpload()"><i class="bi bi-chevron-down" id="sslUploadToggleIcon"></i></button>
+      </div>
+      <div class="card-body p-4" id="sslUploadForm" style="display:none">
+        <div class="mb-3">
+          <label class="form-label small">Certificate (PEM) <span class="text-danger">*</span></label>
+          <textarea class="form-control font-monospace" id="sslCertPem" rows="4" placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label small">Private Key (PEM) <span class="text-danger">*</span></label>
+          <textarea class="form-control font-monospace" id="sslKeyPem" rows="4" placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label small">CA Bundle (PEM) <small style="color:var(--text-secondary)">(optional)</small></label>
+          <textarea class="form-control font-monospace" id="sslCaPem" rows="3" placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="uploadSslCert()"><i class="bi bi-upload"></i> Upload Certificate</button>
+      </div>
+    </div>
+  </section>
+
   <!-- Updates -->
   <section id="sec-updates" class="section">
     <div class="section-header d-flex justify-content-between align-items-start flex-wrap gap-2">
@@ -628,7 +732,8 @@ function escHtml(s) {
 async function api(path, opts) {
   opts = opts || {};
   var res = await fetch('/api' + path, Object.assign({ headers: { 'Content-Type': 'application/json' } }, opts));
-  return res.json();
+  var text = await res.text();
+  try { return JSON.parse(text); } catch (e) { throw new Error('Invalid JSON response (status ' + res.status + ')'); }
 }
 
 function toast(msg, type) {
@@ -666,8 +771,8 @@ overlay.addEventListener('click', function() {
 });
 
 /* Navigation */
-var sectionIcons = { dashboard:'bi-grid-1x2', origins:'bi-hdd-network', cache:'bi-database', images:'bi-image', integration:'bi-plug', updates:'bi-cloud-arrow-down', settings:'bi-gear' };
-var sectionTitles = { dashboard:'Dashboard', origins:'Origins', cache:'Cache', images:'Images', integration:'Integration', updates:'Updates', settings:'Settings' };
+var sectionIcons = { dashboard:'bi-grid-1x2', origins:'bi-hdd-network', cache:'bi-database', images:'bi-image', integration:'bi-plug', ssl:'bi-shield-lock', updates:'bi-cloud-arrow-down', settings:'bi-gear' };
+var sectionTitles = { dashboard:'Dashboard', origins:'Origins', cache:'Cache', images:'Images', integration:'Integration', ssl:'SSL Certificates', updates:'Updates', settings:'Settings' };
 function navigateTo(sec) {
   document.querySelectorAll('[data-section]').forEach(function(l) { l.classList.remove('active'); });
   var link = document.querySelector('[data-section="' + sec + '"]');
@@ -680,6 +785,7 @@ function navigateTo(sec) {
   if (sec === 'dashboard') { loadStatus(); loadLogs(); }
   if (sec === 'origins') loadOrigins();
   if (sec === 'cache') loadKeys();
+  if (sec === 'ssl') loadSslStatus();
   if (sec === 'updates') { loadGitStatus(); }
   if (sec === 'settings') loadSystem();
 }
@@ -936,6 +1042,112 @@ function copyImageUrl() {
   navigator.clipboard.writeText(document.getElementById('imageDirectUrl').value).then(function() { toast('URL copied!'); });
 }
 
+/* SSL Certificates */
+async function loadSslStatus() {
+  var c = document.getElementById('sslStatusContent');
+  try {
+    var d = await api('/ssl/status');
+    if (d.hasCertificate && d.certificate) {
+      var cert = d.certificate;
+      var daysClr = cert.daysRemaining <= 7 ? 'text-danger' : cert.daysRemaining <= 30 ? 'text-warning' : 'text-success';
+      var html = '';
+      html += ir('Domain', cert.domain || '\u2014');
+      if (cert.altNames && cert.altNames.length) html += ir('Alt Names', cert.altNames.join(', '));
+      html += ir('Issuer', cert.issuer || '\u2014');
+      html += ir('Valid From', cert.validFrom || '\u2014');
+      html += ir('Valid To', cert.validTo || '\u2014');
+      html += '<div class="info-row"><span class="info-label">Days Remaining</span><span class="info-value ' + daysClr + ' fw-bold">' + cert.daysRemaining + '</span></div>';
+      html += ir('Source', cert.source || '\u2014');
+      html += ir('Auto-Renew', cert.autoRenew ? 'Yes' : 'No');
+      c.innerHTML = html;
+      document.getElementById('sslRenewBtn').style.display = cert.source === 'letsencrypt' ? '' : 'none';
+      document.getElementById('sslDeleteBtn').style.display = '';
+      document.getElementById('sslStatusCard').style.borderLeft = '4px solid var(--success)';
+    } else {
+      c.innerHTML = '<p class="small mb-0" style="color:var(--text-secondary)"><i class="bi bi-info-circle me-1"></i>No SSL certificate installed. Request one from Let\'s Encrypt or upload your own.</p>';
+      document.getElementById('sslRenewBtn').style.display = 'none';
+      document.getElementById('sslDeleteBtn').style.display = 'none';
+      document.getElementById('sslStatusCard').style.borderLeft = '4px solid var(--warning)';
+    }
+    // Populate domain/email defaults
+    if (d.domain) document.getElementById('sslDomain').value = document.getElementById('sslDomain').value || d.domain;
+    if (d.email) document.getElementById('sslEmail').value = document.getElementById('sslEmail').value || d.email;
+  } catch (e) {
+    c.innerHTML = '<p class="small text-danger mb-0">Failed to load SSL status. ' + escHtml(e.message || '') + '</p>';
+  }
+}
+
+function showSslRequestForm() {
+  var card = document.getElementById('sslRequestCard');
+  card.style.display = card.style.display === 'none' ? '' : 'none';
+}
+
+function toggleSslUpload() {
+  var form = document.getElementById('sslUploadForm');
+  var icon = document.getElementById('sslUploadToggleIcon');
+  if (form.style.display === 'none') {
+    form.style.display = '';
+    icon.className = 'bi bi-chevron-up';
+  } else {
+    form.style.display = 'none';
+    icon.className = 'bi bi-chevron-down';
+  }
+}
+
+async function requestSslCert() {
+  var domain = document.getElementById('sslDomain').value.trim();
+  var email = document.getElementById('sslEmail').value.trim();
+  if (!domain) { toast('Domain is required.', 'warning'); return; }
+  if (!email) { toast('Email is required.', 'warning'); return; }
+  if (!confirm('Request a Let\'s Encrypt certificate for ' + domain + '?\n\nMake sure the domain points to this server and port 80 is accessible.')) return;
+  try {
+    toast('Requesting certificate... This may take a moment.', 'info');
+    var d = await api('/ssl/request', { method: 'POST', body: JSON.stringify({ domain: domain, email: email }) });
+    if (d.error) { toast(d.error, 'danger'); return; }
+    toast('Certificate obtained successfully!');
+    loadSslStatus();
+    document.getElementById('sslRequestCard').style.display = 'none';
+  } catch (e) { toast('Failed to request certificate. ' + (e.message || ''), 'danger'); }
+}
+
+async function renewSslCert() {
+  if (!confirm('Renew the current SSL certificate?')) return;
+  try {
+    toast('Renewing certificate...', 'info');
+    var d = await api('/ssl/renew', { method: 'POST' });
+    if (d.error) { toast(d.error, 'danger'); return; }
+    toast('Certificate renewed successfully!');
+    loadSslStatus();
+  } catch (e) { toast('Failed to renew certificate. ' + (e.message || ''), 'danger'); }
+}
+
+async function deleteSslCert() {
+  if (!confirm('Delete the current SSL certificate? The CDN will fall back to HTTP.')) return;
+  try {
+    var d = await api('/ssl/delete', { method: 'DELETE' });
+    if (d.error) { toast(d.error, 'danger'); return; }
+    toast('Certificate deleted.');
+    loadSslStatus();
+  } catch (e) { toast('Failed to delete certificate. ' + (e.message || ''), 'danger'); }
+}
+
+async function uploadSslCert() {
+  var cert = document.getElementById('sslCertPem').value.trim();
+  var key = document.getElementById('sslKeyPem').value.trim();
+  var ca = document.getElementById('sslCaPem').value.trim();
+  if (!cert) { toast('Certificate PEM is required.', 'warning'); return; }
+  if (!key) { toast('Private key PEM is required.', 'warning'); return; }
+  try {
+    var d = await api('/ssl/upload', { method: 'POST', body: JSON.stringify({ cert: cert, key: key, ca: ca || undefined }) });
+    if (d.error) { toast(d.error, 'danger'); return; }
+    toast('Certificate uploaded successfully!');
+    document.getElementById('sslCertPem').value = '';
+    document.getElementById('sslKeyPem').value = '';
+    document.getElementById('sslCaPem').value = '';
+    loadSslStatus();
+  } catch (e) { toast('Failed to upload certificate. ' + (e.message || ''), 'danger'); }
+}
+
 /* Updates */
 async function loadGitStatus() {
   var c = document.getElementById('gitStatusContent');
@@ -961,7 +1173,7 @@ async function loadGitStatus() {
     document.getElementById('footerVersion').textContent = versionText;
     c.innerHTML = html;
   } catch (e) {
-    c.innerHTML = '<p class="small text-danger mb-0">Failed to load git status.</p>';
+    c.innerHTML = '<p class="small text-danger mb-0">Failed to load git status. ' + escHtml(e.message || '') + '</p>';
   }
 }
 
@@ -1105,7 +1317,7 @@ async function loadSystem() {
     var la = d.loadAvg || [];
     c.innerHTML = '<div class="settings-grid">' +
       '<div class="card p-4"><h6 class="fw-semibold mb-3"><i class="bi bi-server me-2" style="color:var(--accent)"></i>Server Info</h6>' +
-      ir('Node.js', d.node) + ir('Platform', d.platform + ' / ' + d.arch) + ir('Hostname', d.hostname) + ir('CPUs', d.cpus) + ir('Uptime', d.uptimeHuman || d.uptime) + ir('Load Avg', la.length ? la.map(function(v){return v.toFixed(2);}).join(', ') : '\u2014') +
+      ir('Node.js', d.node) + ir('Platform', d.platform + ' / ' + d.arch) + ir('Hostname', d.hostname) + ir('CPUs', d.cpus) + ir('Uptime', d.uptimeHuman || d.uptime) + ir('Load Avg', la.length ? la.join(', ') : '\u2014') +
       '</div>' +
       '<div class="card p-4"><h6 class="fw-semibold mb-3"><i class="bi bi-sliders me-2" style="color:var(--accent)"></i>Configuration</h6>' +
       (d.config ? ir('CDN Port', d.config.cdnPort) + ir('Admin Port', d.config.adminPort) + ir('Cache TTL', (d.config.cacheTtl || '\u2014') + 's') + ir('Max Items', d.config.cacheMaxItems) + ir('Proxy Timeout', (d.config.proxyTimeout || '\u2014') + 'ms') + ir('Log Level', d.config.logLevel) : '<p style="color:var(--text-secondary)">No config data.</p>') +
@@ -1115,7 +1327,7 @@ async function loadSystem() {
       '<div class="mb-3"><div class="d-flex justify-content-between small mb-1"><span style="color:var(--text-secondary)">Heap Used</span><span class="fw-semibold">' + Math.round(d.heapUsedMB) + ' / ' + Math.round(d.heapTotalMB) + ' MB (' + heapPct + '%)</span></div><div class="mem-bar"><div class="mem-bar-fill" style="width:' + heapPct + '%;background:' + heapClr + '"></div></div></div>' +
       ir('Process Memory', Math.round(d.processMemoryMB || 0) + ' MB') + ir('Free Memory', Math.round(d.freeMemoryMB || 0) + ' MB') +
       '</div></div>';
-  } catch (e) { c.innerHTML = '<div class="text-center text-danger py-4">Failed to load system info.</div>'; }
+  } catch (e) { c.innerHTML = '<div class="text-center text-danger py-4">Failed to load system info. ' + escHtml(e.message || '') + '</div>'; }
 }
 
 function ir(label, value) {
