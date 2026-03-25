@@ -145,10 +145,10 @@ function uploadCertificate(certPem, keyPem, caPem) {
     throw new Error('Invalid private key PEM: ' + err.message);
   }
 
-  fs.writeFileSync(CERT_FILE, certPem, 'utf8');
+  fs.writeFileSync(CERT_FILE, certPem, { mode: 0o644, encoding: 'utf8' });
   fs.writeFileSync(KEY_FILE, keyPem, { mode: 0o600, encoding: 'utf8' });
   if (caPem) {
-    fs.writeFileSync(CA_FILE, caPem, 'utf8');
+    fs.writeFileSync(CA_FILE, caPem, { mode: 0o644, encoding: 'utf8' });
   }
 
   saveMeta({
@@ -237,7 +237,7 @@ async function requestCertificate(domain, email) {
   });
 
   // Save certificate and key
-  fs.writeFileSync(CERT_FILE, cert, 'utf8');
+  fs.writeFileSync(CERT_FILE, cert, { mode: 0o644, encoding: 'utf8' });
   fs.writeFileSync(KEY_FILE, csrKey.toString(), { mode: 0o600, encoding: 'utf8' });
 
   saveMeta({

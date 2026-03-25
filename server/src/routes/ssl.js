@@ -13,6 +13,7 @@
 
 const express = require('express');
 const ssl = require('../ssl');
+const config = require('../config');
 const { logger } = require('../logger');
 
 const router = express.Router();
@@ -23,9 +24,9 @@ router.get('/status', (req, res) => {
   res.json({
     hasCertificate: ssl.hasCertificate(),
     certificate: info,
-    sslEnabled: !!process.env.SSL_ENABLED && process.env.SSL_ENABLED !== 'false',
-    domain: process.env.SSL_DOMAIN || '',
-    email: process.env.SSL_EMAIL || '',
+    sslEnabled: config.ssl.enabled,
+    domain: config.ssl.domain,
+    email: config.ssl.email,
   });
 });
 

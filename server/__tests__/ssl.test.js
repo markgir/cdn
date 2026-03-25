@@ -2,6 +2,7 @@
 // Credits: Developed by iddigital.pt
 
 const request = require('supertest');
+const os = require('os');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
@@ -189,8 +190,8 @@ describe('SSL Certificate API', () => {
 
       try {
         // Write key to temp file
-        const tmpKeyFile = path.join('/tmp', 'test-ssl-key.pem');
-        const tmpCertFile = path.join('/tmp', 'test-ssl-cert.pem');
+        const tmpKeyFile = path.join(os.tmpdir(), 'test-ssl-key.pem');
+        const tmpCertFile = path.join(os.tmpdir(), 'test-ssl-cert.pem');
         fs.writeFileSync(tmpKeyFile, testKey);
 
         execFileSync('openssl', [
@@ -211,8 +212,7 @@ describe('SSL Certificate API', () => {
 
     it('can upload a valid certificate and check status', async () => {
       if (!testCert) {
-        // Skip if openssl is not available
-        console.log('Skipping cert upload test - openssl not available');
+        // openssl is not available in this environment - skip
         return;
       }
 
