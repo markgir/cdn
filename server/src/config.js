@@ -16,6 +16,22 @@ const config = {
     password: process.env.ADMIN_PASS || 'changeme',
     secret: process.env.ADMIN_SECRET || 'cdn-admin-secret-key',
   },
+  ssl: {
+    /** Enable HTTPS for the CDN server */
+    enabled: process.env.SSL_ENABLED === 'true',
+    /** HTTPS port for the CDN (default 443) */
+    port: parseInt(process.env.SSL_PORT || '443', 10),
+    /** HTTP port for ACME challenges and redirect (default 80) */
+    httpRedirectPort: parseInt(process.env.SSL_HTTP_PORT || '80', 10),
+    /** Domain for SSL certificate */
+    domain: process.env.SSL_DOMAIN || 'cdn.3rhost.pt',
+    /** Email for Let's Encrypt registration */
+    email: process.env.SSL_EMAIL || '',
+    /** Use Let's Encrypt staging server (for testing) */
+    acmeStaging: process.env.SSL_ACME_STAGING === 'true',
+    /** Auto-renew certificates before expiry */
+    autoRenew: process.env.SSL_AUTO_RENEW !== 'false',
+  },
   cache: {
     /** Default TTL for cached responses in seconds */
     defaultTtl: parseInt(process.env.CACHE_TTL || '3600', 10),
